@@ -18,8 +18,8 @@ export class BigAdComponent implements OnInit {
     }
   ngOnInit() {
     this.adsService.get('http://localhost:61988/api/ads/'+this.id)
-    .subscribe((responces: string) => {
-      this.response = JSON.parse(responces);
+    .subscribe((responces: any) => {
+      this.response = (responces);
       console.log(this.response);
       })
   }

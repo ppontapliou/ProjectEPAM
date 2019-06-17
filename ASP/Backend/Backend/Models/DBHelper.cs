@@ -37,10 +37,15 @@ namespace Backend.Models
             }
             return ads;
         }
-        public static void DeleteAd(int id)
+        public static void DeleteAd(Ad ad)
         {
-            string sqlExpression = "exec DeleteAd " + id;
-            SendRequest(sqlExpression);
+            
+            string sqlExpression = "exec DeleteAd @Login, @Password, @IdAd";
+            SqlParameter[] sqlParameters = new SqlParameter[3];
+            sqlParameters[0] = new SqlParameter("@Login",ad.Contact.Login);
+            sqlParameters[1] = new SqlParameter("@Password", ad.Contact.Password);
+            sqlParameters[2] = new SqlParameter("@IdAd", ad.Id);
+            SendRequest(sqlExpression,sqlParameters);
         }
         public static void AddAd(Ad ad)
         {
@@ -57,13 +62,21 @@ namespace Backend.Models
             string sqlExpression = "exec Authentication " + contact.LoginAndPassword;
             SendRequest(sqlExpression);
         }
-        private static void SendRequest(string sqlExpression)
+        private static void SendRequest(string sqlExpression,params SqlParameter[] sqlParameters)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                
+                //command.Parameters.Add(new SqlParameter("@Login", contact.Login));
+                //command.Parameters.Add(new SqlParameter("@Password", contact.Password));
+                //command.Parameters.Add(new SqlParameter("@Name", contact.Name));
+                foreach (var param in sqlParameters)
+                {
+                    command.Parameters.Add(param);
+                }
+                command.ExecuteNonQuery();
+                connection.Close();
             }
         }
         public delegate void AddMethod(string param);
@@ -132,6 +145,15 @@ namespace Backend.Models
                 command.ExecuteNonQuery();
                 connection.Close();
             }
+        }
+        public static void DeleteUser(int id, Contact contact)
+        {
+            string sqlExpression = "exec DeleteUser @Login, @Password, @UserID ";
+            SqlParameter[] sqlParameters = new SqlParameter[3];
+            sqlParameters[0] = new SqlParameter("@Login", contact.Login);
+            sqlParameters[1] = new SqlParameter("@Password", contact.Password);
+            sqlParameters[2] = new SqlParameter("@UserId", id);
+            SendRequest(sqlExpression,sqlParameters);
         }
     }
 }

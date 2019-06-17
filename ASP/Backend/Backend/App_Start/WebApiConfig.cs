@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Unity;
+using WebApiDepInject.Models;
 
 namespace Backend
 {
@@ -21,7 +22,12 @@ namespace Backend
             config.EnableCors(corsAttr);
             config.MapHttpAttributeRoutes();
 
+            var container = new UnityContainer();
+            container.RegisterType<IRepository, Repository>();
+            config.DependencyResolver = new UnityResolver(container);
+
             
+
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",

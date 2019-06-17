@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Backend.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Http;
 
 namespace Backend.Interfaces
 {
     public interface IRepository
     {
-        string GetAds();
-        string GetAd(int id);
-        void DeleteAd(int id);
-        void PostAd([FromBody]string value);
+        List<Ad> GetAds();
+        Ad GetAd(int id);
+        void DeleteAd(Ad ad);
+        void PostAd(Ad value);
+        void PutAd(Ad ad);
+        string GetUser(Contact contact);
+        void DeleteUser(int id,Contact contact);
+        void PostUser(Contact contact);
+        void PutUser(Contact contact);
     }
 }

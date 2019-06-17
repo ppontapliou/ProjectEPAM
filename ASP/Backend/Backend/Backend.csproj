@@ -118,9 +118,11 @@
     <Compile Include="Models\DBHelper.cs" />
     <Compile Include="Models\Person.cs" />
     <Compile Include="Models\Repository.cs" />
+    <Compile Include="Models\UnityResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="libman.json" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -20,8 +20,8 @@ export class AdsPageComponent implements OnInit {
     //this.adsService.get('https://api.github.com/users')
     
     this.adsService.get('http://localhost:61988/api/ads')
-    .subscribe((responces: string) => {
-      this.response = JSON.parse(responces);
+    .subscribe((responces: any) => {
+      this.response = (responces);
       console.log(this.response);
       })
   }

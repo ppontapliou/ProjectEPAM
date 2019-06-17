@@ -1,9 +1,5 @@
-﻿using Backend.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using Backend.Interfaces;
+using Backend.Models;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -11,39 +7,46 @@ namespace Backend.Controllers
 {
     public class UserController : ApiController
     {
+        IRepository _repository;
+
+        public UserController(IRepository repository)
+        {
+            _repository = repository;
+        }
+
         // GET: api/User
         [HttpGet]
         [ResponseType(typeof(Contact))]
-        public string Get(Contact contact)
+        public IHttpActionResult Get(Contact contact)
         {
-            return DBHelper.GetContactsInfo("exec Authentication " + contact.LoginAndPassword);
-        }
-
-        // GET: api/User/5
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+            return Ok(_repository.GetUser(contact));
+        }                
 
         // POST: api/User
         [HttpPost]
         [ResponseType(typeof(Contact))]
-        public void Post(Contact contact)
+        public IHttpActionResult Post(Contact contact)
         {
-            DBHelper.CerateContact( contact);
+            _repository.PostUser(contact);
+            return Ok();
         }
 
         // PUT: api/User/5
         [HttpPut]
         [ResponseType(typeof(Contact))]
-        public void Put(Contact contact)
+        public IHttpActionResult Put(Contact contact)
         {
-            DBHelper.ChangeUserName(contact);
+            _repository.PutUser(contact);
+            return Ok();
         }
 
         // DELETE: api/User/5
-        public void Delete(int id)
+        [HttpDelete]
+        [ResponseType(typeof(Contact))]
+        public IHttpActionResult Delete(int id,[FromBody]Contact contact)
         {
+            _repository.DeleteUser(id,contact);
+            return Ok();
         }
     }
 }

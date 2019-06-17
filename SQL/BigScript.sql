@@ -1,4 +1,5 @@
 CREATE DATABASE EPAM_Project
+go
 use EPAM_Project
 go
 --Table
@@ -22,11 +23,19 @@ create table [States](
 	Id int PRIMARY KEY IDENTITY(1, 1),
 	[State] Nvarchar(20) not null
 )
-create table Contacts(
+create table Statuses(
 	Id int PRIMARY KEY IDENTITY(1, 1),
-	Name nvarchar(100) not null,
+	[Status] nvarchar(100) not null
+)
+create table Users(
+	Id int PRIMARY KEY IDENTITY(1, 1),
+	[Status] int not null FOREIGN KEY REFERENCES Statuses(Id) ON DELETE CASCADE ON UPDATE CASCADE,
 	[Login] nvarchar(50) not null unique,
 	[Password] nvarchar(max) not null,
+)
+create table Contacts(
+	Id int PRIMARY KEY FOREIGN KEY REFERENCES Users(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+	Name nvarchar(100) not null,
 )
 create table ContactsEmails(
 	Id int PRIMARY KEY IDENTITY(1, 1),
@@ -94,24 +103,33 @@ CREATE proc [dbo].[Initialization]
 as
 declare @out1 int
 select @out1 =
-(select Id from Contacts
-where Contacts.[Login] = @Login and Contacts.[Password] = @Password)
+(select Contacts.Id from Contacts inner join Users
+					on Users.Id = Contacts.Id
+where Users.[Login] = @Login and Users.[Password] = @Password)
 select @out = @out1
 go
+
 CREATE proc [dbo].[AddContact]
 @Name NVARCHAR(100),
 @Login NVARCHAR(50),
-@Password NVARCHAR(max)
+@Password NVARCHAR(max),
+@Status int
 as
+insert into Users 
+		   ([Login]
+		   ,[Password]
+		   ,[Status])
+	 values
+		   (@Login
+		   ,@Password
+		   ,@Status)
 
 INSERT INTO [dbo].[Contacts]
            ([Name]
-		   ,[Login]
-		   ,[Password])
+		   ,[Id])
      VALUES
            (@Name
-		   ,@Login
-		   ,@Password)
+		   ,SCOPE_IDENTITY())
 go
 CREATE proc [dbo].[GetAd]
 @id int
@@ -272,7 +290,8 @@ create proc [Authentication]
 @Login nvarchar(50),
 @Password nvarchar(max)
 as
-select Name from Contacts
+select Name from Contacts inner join Users
+					on Contacts.Id = Users.Id
 	where [Login] = @Login and [Password] = @Password
 go
 
@@ -281,9 +300,11 @@ create proc ChangeUserName
 @Password nvarchar(max),
 @Name nvarchar(100)
 as
+declare @Contact int
+select @Contact = (select Id from Users where @Login = Users.[Login] and Users.[Password] = @Password)
 UPDATE [dbo].[Contacts]
    SET [Name] = @Name      
- WHERE @Login = Contacts.[Login] and Contacts.[Password] = @Password
+ WHERE @Contact = Contacts.Id
 
  go
 
@@ -308,14 +329,31 @@ select Emails.Email from Contacts
 			on ContactsEmails.Email = Emails.Id
 	where Contacts.Id = @Id
 go
+create proc DeleteUser
+@Login nvarchar(50),
+@Password nvarchar(max),
+@UserID int
+as
+if (select COUNT(*) from Users where users.Login = @Login and Users.[Password]= @Password and Users.[Status] = 3) = 1
+begin
+DELETE FROM [dbo].[Users]
+      WHERE Users.Id = @UserID
+end
+go
 --initializing data
-EXECUTE [dbo].[AddContact] 'Илья Михайлович','log1','password1'
-EXECUTE [dbo].[AddContact] 'Владимир Стипанович','log2','password1'
-EXECUTE [dbo].[AddContact] 'Константин Иванов','log3','password1'
-EXECUTE [dbo].[AddContact] 'Павел','log4','password1'
-EXECUTE [dbo].[AddContact] 'Татьяна','log5','password1'
-EXECUTE [dbo].[AddContact] 'Дмитрий','log6','password1'
-EXECUTE [dbo].[AddContact] 'Матвей','log7','password1'
+INSERT INTO [dbo].[Statuses] ([Status]) VALUES ('User')
+INSERT INTO [dbo].[Statuses] ([Status]) VALUES ('Editor')
+INSERT INTO [dbo].[Statuses] ([Status]) VALUES ('Admin')
+
+
+
+EXECUTE [dbo].[AddContact] 'Илья Михайлович','log1','password1',1
+EXECUTE [dbo].[AddContact] 'Владимир Стипанович','log2','password1',1
+EXECUTE [dbo].[AddContact] 'Константин Иванов','log3','password1',1
+EXECUTE [dbo].[AddContact] 'Павел','log4','password1',1
+EXECUTE [dbo].[AddContact] 'Татьяна','log5','password1',1
+EXECUTE [dbo].[AddContact] 'Дмитрий','log6','password1',1
+EXECUTE [dbo].[AddContact] 'Матвей','log7','password1',1
 
 INSERT INTO [dbo].[Types] ([Type]) VALUES ('Товар')
 INSERT INTO [dbo].[Types] ([Type]) VALUES ('Услуга')

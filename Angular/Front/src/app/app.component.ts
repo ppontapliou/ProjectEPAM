@@ -18,14 +18,6 @@ export class AppComponent implements OnInit {
   constructor(private adsService: AdsServise) { }
 
   ngOnInit() {
-    this.ads = this.adsService.ads
-    console.log(this.ads);
-    //this.adsService.get('https://api.github.com/users')
-    
-    this.adsService.get('http://localhost:61988/api/ads')
-    .subscribe((responces: string) => {
-      this.response = JSON.parse(responces);
-      console.log(this.response);
-      })
+    //  })
   }
 }

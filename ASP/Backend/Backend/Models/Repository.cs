@@ -1,32 +1,56 @@
 ﻿using Backend.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
 
 namespace Backend.Models
 {
     public class Repository : IRepository
     {
-        public void DeleteAd(int id)
+       
+
+        public Ad GetAd(int id)
         {
-            throw new NotImplementedException();
+            return new Ads(DBHelper.GetAds("exec GetAd " + id)).Ad[0];
         }
 
-        public string GetAd(int id)
+        public List<Ad> GetAds()
         {
-            throw new NotImplementedException();
+            return new Ads(DBHelper.GetAds("exec GetAds")).Ad;
         }
 
-        public string GetAds()
+        public void PostAd(Ad ad)
         {
-            throw new NotImplementedException();
+            DBHelper.AddAd(ad);
         }
 
-        public void PostAd([FromBody] string value)
+        public void PutAd(Ad ad)
         {
-            throw new NotImplementedException();
+            DBHelper.UpdateAd(ad);
+        }
+
+        public void DeleteAd(Ad ad)
+        {
+            DBHelper.DeleteAd(ad);
+           
+        }
+
+        public string GetUser(Contact contact)
+        {
+            return DBHelper.GetContactsInfo("exec Authentication " + contact.LoginAndPassword);
+        }
+
+        public void DeleteUser(int id,Contact contact)
+        {
+           
+        }
+
+        public void PostUser(Contact contact)
+        {
+            DBHelper.CerateContact(contact);
+        }
+
+        public void PutUser(Contact contact)
+        {
+            DBHelper.ChangeUserName(contact);
         }
     }
 }

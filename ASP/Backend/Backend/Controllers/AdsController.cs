@@ -1,78 +1,60 @@
 ﻿using Backend.Interfaces;
 using Backend.Models;
-using Newtonsoft.Json;
-using StructureMap;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using System.Web.Http.Description;
-using System.Web.Script.Serialization;
 
 
 namespace Backend.Controllers
 {
-    public class RegisterByContainer
-    {
-        public IContainer Container;
-        //unity container
-        //iactionresult
-        public RegisterByContainer( )
-        {
-            Container = new Container(x => {
-                x.For<IRepository>().Use<Repository>();
-                
-            });
-        }
-    }
+
     public class AdsController : ApiController
     {
         // GET: api/Ads
         IRepository _repository;
 
-        public AdsController()
+        public AdsController(IRepository repository)
         {
-            var container = new RegisterByContainer().Container;
-            var class1Inst = container.GetInstance<IRepository>();
+            _repository = repository;
         }
+
         public IHttpActionResult Get()
         {           
-            JavaScriptSerializer serializer = new JavaScriptSerializer();            
-            var result = new Ads(DBHelper.GetAds("exec GetAds")).Ad;
-            return Ok(result);
+            return Ok(_repository.GetAds());
         }
 
         // GET: api/Ads/5
-        public string Get(int id)
-        {
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            return serializer.Serialize(new Ads(DBHelper.GetAds("exec GetAd "+id)).Ad[0]);
+        public IHttpActionResult Get(int id)
+        {           
+            var result = new Ads(DBHelper.GetAds("exec GetAd " + id)).Ad[0];
+            return Ok(_repository.GetAd(id));
         }
 
         // POST: api/Ads
         [HttpPost]
         [ResponseType(typeof(Ad))]
-        public void Post(Ad value)
+        public IHttpActionResult Post([FromBody]Ad value)
         {
-            DBHelper.AddAd(value);
+            _repository.PostAd(value);           
+            return Ok();
         }
 
         // PUT: api/Ads/5
         [HttpPut]
         [ResponseType(typeof(Ad))]
-        public void Put(Ad value)
+        public IHttpActionResult Put(Ad value)
         {
-            DBHelper.UpdateAd(value);
+            _repository.PutAd(value);            
+            return Ok();
         }
 
         // DELETE: api/Ads/5
-        public void Delete(int id)
+        [HttpDelete]
+        [ResponseType(typeof(Ad))]
+        public IHttpActionResult Delete(Ad value)
         {
-            DBHelper.DeleteAd(id);
+            _repository.DeleteAd(value);
+          
+            return Ok();
         }
     }
 }
