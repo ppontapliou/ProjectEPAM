@@ -1,0 +1,33 @@
+<p>
+  {{response.NameAd}}
+</p>
+<p>
+  {{response.Title}}
+</p>
+<p>
+  {{response.Contact.Name}}
+</p>
+<p>
+  {{response.DateCreation | date:'medium'}}
+</p>
+<p>
+  <img src="{{response.Picture}}" style="height: 350px">
+</p>
+<p >
+  {{response.State}}
+</p>
+<p>
+  {{response.Type}}
+</p>
+<p>
+  {{response.Category}}
+</p>
+<p>
+  {{response.Adress}}
+</p>
+<p *ngFor="let ad of response.Contact.Phones">
+  {{ad}}
+</p>
+<p *ngFor="let ad of response.Contact.Mails">
+  {{ad}}
+</p>
