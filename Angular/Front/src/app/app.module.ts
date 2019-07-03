@@ -15,6 +15,7 @@ import { AdsPageComponent } from './MyComponent/ads-page/ads-page.component';
 import { BigAdComponent } from './MyComponent/big-ad/big-ad.component';
 import { AdComponent } from './MyComponent/Ad/ad.component';
 import { SortPipe } from './MyComponent/ads-page/sort.pipe';
+import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 
 const routes = [
   { path: '', component: AdsPageComponent },
@@ -37,7 +38,7 @@ const routes = [
     ScrollingModule,
     RouterModule.forRoot(routes),
     FormsModule,
-
+    //ScrollDispatchModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

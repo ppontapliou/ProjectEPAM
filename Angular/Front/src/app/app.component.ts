@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { AdsServise } from './MyServises/ads.servise';
 
 
-
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
