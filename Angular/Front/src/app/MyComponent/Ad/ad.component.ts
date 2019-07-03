@@ -11,5 +11,6 @@ export class AdComponent {
     Id: number;
     ngOnInit() {
         this.Id = this.ad.Id
+        
     }
 }

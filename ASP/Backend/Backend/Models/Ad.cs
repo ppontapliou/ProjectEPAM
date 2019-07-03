@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
@@ -9,7 +8,7 @@ namespace Backend.Models
 
     public class Ad
     {
-
+        
         public int Id { get; set; }
         public string NameAd { get; set; }
         public string Title { get; set; }
@@ -25,46 +24,13 @@ namespace Backend.Models
         {
 
         }
-        public List<SqlParameter> Params
+        public override string ToString()
         {
-            get
-            {
-                List<SqlParameter> SqlParameters = new List<SqlParameter>
-                {
-                    new SqlParameter("@Ad",NameAd),
-                    new SqlParameter("@Title",Title),
-                    new SqlParameter("@DateCreation",DateCreation),
-                    new SqlParameter("@Picture",Picture),
-                    new SqlParameter("@Category",Category),
-                    new SqlParameter("@Adress",Adress),
-                    new SqlParameter("@Type",Type),
-                    new SqlParameter("@State",State),
-                    new SqlParameter("@Login",Contact.Login),
-                    new SqlParameter("@Password",Contact.Password),
-                };
-                return SqlParameters;
-            }
+            return $"\'{NameAd}\', \'{Title}\', \'{DateCreation}\', \'{Picture}\', {Category}, \'{Adress}\', {Type}, {State}, \'{Contact.Login}\', \'{Contact.Password}\'";
         }
-        public List<SqlParameter> ParamsWithID
+        public string ToStringWithId()
         {
-            get
-            {
-                List<SqlParameter> SqlParameters = new List<SqlParameter>
-                {
-                    new SqlParameter("@Ad",NameAd),
-                    new SqlParameter("@Title",Title),
-                    new SqlParameter("@DateCreation",DateCreation),
-                    new SqlParameter("@Picture",Picture),
-                    new SqlParameter("@Category",Category),
-                    new SqlParameter("@Adress",Adress),
-                    new SqlParameter("@Type",Type),
-                    new SqlParameter("@State",State),
-                    new SqlParameter("@Login",Contact.Login),
-                    new SqlParameter("@Password",Contact.Password),
-                    new SqlParameter("@IdAd",Id)
-                };
-                return SqlParameters;
-            }
+            return $"\'{NameAd}\', \'{Title}\', \'{DateCreation}\', \'{Picture}\', {Category}, \'{Adress}\', {Type}, {State}, \'{Contact.Login}\', \'{Contact.Password}\', {Id}";
         }
     }
 }

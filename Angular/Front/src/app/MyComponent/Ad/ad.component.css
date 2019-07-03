@@ -1,6 +1,6 @@
 img {
-    max-width: 350px !important;
-    max-height: 350px !important;
+    max-width: 150px !important;
+    max-height: 150px !important;
 }
 
 .s6 {
@@ -30,12 +30,12 @@ img {
     color: #ffab40;
    
     text-decoration: none;
-    transition: color .3s ease;
+    
     text-transform: uppercase;
 }
 .card {
     display: block;
-    height: 550px;
+    height: 250px;
 }
 .card {
     position: relative;
@@ -46,5 +46,33 @@ img {
 }
 .card-image img{
     display: block;
-    margin: 0px auto;
+    margin: auto;
+    
+}
+.card-image{
+    position: relative;
+    width: 190px !important;
+    height: 190px !important;
+    margin: 0;
+    float: left;
+}
+.card-title {
+    display: block;
+    /*position: absolute;*/
+    bottom: 0px;
+    margin: auto;
+    text-align: center;
+}
+.card-action{
+    text-align: center;
+}
+.card-content {
+    height: 60%;    
+    padding: 5px; /* Поля вокруг текста */
+    text-overflow: ellipsis; 
+}
+.card-content p{
+    height: 100px;
+    padding: 5px; /* Поля вокруг текста */
+    text-overflow: ellipsis; 
 }

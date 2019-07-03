@@ -1,19 +1,20 @@
 ﻿using Backend.Interfaces;
-using System;
 using System.Collections.Generic;
 
 namespace Backend.Models
 {
     public class Repository : IRepository
     {
+       
+
         public Ad GetAd(int id)
         {
-            return DBHelper.GetAd(id);//return ad from request
+            return new Ads(DBHelper.GetAds("exec GetAd " + id)).Ad[0];
         }
 
         public List<Ad> GetAds()
         {
-            return DBHelper.GetAds();//return property with all ads
+            return new Ads(DBHelper.GetAds("exec GetAds")).Ad;
         }
 
         public void PostAd(Ad ad)
@@ -28,18 +29,18 @@ namespace Backend.Models
 
         public void DeleteAd(Ad ad)
         {
-            DBHelper.DeleteAd(ad);           
+            DBHelper.DeleteAd(ad);
+           
         }
 
         public string GetUser(Contact contact)
-        {            
-            
-            return DBHelper.GetContactsInfo("exec Authentication @Login, @Password",contact);
+        {
+            return DBHelper.GetContactsInfo("exec Authentication " + contact.LoginAndPassword);
         }
 
         public void DeleteUser(int id,Contact contact)
         {
-            DBHelper.DeleteUser(id,contact);
+           
         }
 
         public void PostUser(Contact contact)

@@ -26,9 +26,8 @@ namespace Backend.Models
                     Type = arr[8],
                     State = arr[9]
                 };
-               
-                DBHelper.GetContactsInfo("exec GetPhones @Id" , x => ad.Contact.AddPhones(x), ad.Contact.Id);
-                DBHelper.GetContactsInfo("exec GetMails @Id", x => ad.Contact.AddMails(x), ad.Contact.Id);
+                DBHelper.GetContactsInfo("exec GetPhones " + ad.Contact.Id, x => ad.Contact.AddPhones(x));
+                DBHelper.GetContactsInfo("exec GetMails " + ad.Contact.Id, x => ad.Contact.AddMails(x));
                 this.Ad.Add(ad);
             }
         }

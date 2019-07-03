@@ -1,0 +1,9 @@
+<div action="/search/" target="_blank" class="div-search">
+  <input type="search" name="text" required placeholder="Поиск" [(ngModel)]="sortAd">
+</div>
+
+<div class="row">
+  <cdk-virtual-scroll-viewport [itemSize]="20">
+    <app-ad *cdkVirtualFor="let ad of response | sort:sortAd" [ad]="ad"></app-ad>
+  </cdk-virtual-scroll-viewport>
+</div>

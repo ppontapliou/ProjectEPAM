@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AdsServise } from '../ads.servise';
+import { AdsServise } from 'src/app/MyServises/ads.servise';
+
 
 @Component({
   selector: 'app-ads-page',
@@ -7,7 +8,7 @@ import { AdsServise } from '../ads.servise';
   styleUrls: ['./ads-page.component.css']
 })
 export class AdsPageComponent implements OnInit {
-
+  sortAd: string = '';
   ads: any;
   response: any;
   adstmp: [];
@@ -15,13 +16,13 @@ export class AdsPageComponent implements OnInit {
   constructor(private adsService: AdsServise) { }
 
   ngOnInit() {
-
-    //this.adsService.get('https://api.github.com/users')
     
+    //this.adsService.get('https://api.github.com/users')
+
     this.adsService.get('http://localhost:61988/api/ads')
-    .subscribe((responces: any) => {
-      this.response = (responces);
-      console.log(this.response);
+      .subscribe((responces: any) => {
+        this.response = (responces);
+        console.log(this.response);
       })
   }
 }

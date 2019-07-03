@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthorizationService } from 'src/app/authorization.service';
+import { AuthorizationService } from 'src/app/MyServises/authorization.service';
+
 
 @Component({
   selector: 'app-log',
@@ -26,6 +27,7 @@ export class LogComponent implements OnInit {
     this.auth.LogOut();
     this.log =""; 
     this.pass= "";
+    
   }
 
 }

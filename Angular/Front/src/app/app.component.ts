@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AdsServise } from './ads.servise';
+import { AdsServise } from './MyServises/ads.servise';
+
 
 
 

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AdsServise } from '../ads.servise';
+import { AdsServise } from 'src/app/MyServises/ads.servise';
+
 
 @Component({
   selector: 'app-big-ad',

@@ -9,20 +9,14 @@ namespace Backend.Models
     public class DBHelper
     {
         static readonly string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EPAM_Project;Integrated Security=True";
-        public delegate void AddMethod(string param);
-        public static List<string[]> GetAds(string sqlExpression, int id = -1)
+        public static List<string[]> GetAds(string sqlExpression)
         {
-
             List<string[]> ads = new List<string[]>();
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                if (id >= 0)
-                {
-                    command.Parameters.Add(new SqlParameter("@Id", id));
-                }
                 SqlDataReader reader = command.ExecuteReader();
                 int i = 0;
                 if (reader.HasRows)
@@ -43,52 +37,40 @@ namespace Backend.Models
             }
             return ads;
         }
-        public static Ad GetAd(int id)
-        {
-            return new Ads(DBHelper.GetAds("exec GetAd @Id", id)).Ad[0];
-        }
-        public static List<Ad> GetAds()
-        {
-            return new Ads(GetAds("exec GetAds")).Ad;
-        }
         public static void DeleteAd(Ad ad)
         {
+            
             string sqlExpression = "exec DeleteAd @Login, @Password, @IdAd";
-            List<SqlParameter> sqlParameters = new List<SqlParameter>
-            {
-                new SqlParameter("@Login", ad.Contact.Login),
-                new SqlParameter("@Password", ad.Contact.Password),
-                new SqlParameter("@IdAd", ad.Id)
-            };
-            SendRequest(sqlExpression, sqlParameters);
+            SqlParameter[] sqlParameters = new SqlParameter[3];
+            sqlParameters[0] = new SqlParameter("@Login",ad.Contact.Login);
+            sqlParameters[1] = new SqlParameter("@Password", ad.Contact.Password);
+            sqlParameters[2] = new SqlParameter("@IdAd", ad.Id);
+            SendRequest(sqlExpression,sqlParameters);
         }
         public static void AddAd(Ad ad)
         {
-            string sqlExpression = "exec AddAd @Ad, @Title, @DateCreation, @Picture, @Category, @Adress, @Type, @State, @Login, @Password";
-            SendRequest(sqlExpression, ad.Params);
+            string sqlExpression = "exec AddAd " + ad.ToString();
+            SendRequest(sqlExpression);
         }
         public static void UpdateAd(Ad ad)
         {
-            string sqlExpression = "exec UpdateAd @Ad, @Title, @DateCreation, @Picture, @Category, @Adress, @Type, @State, @Login, @Password, @IdAd";
-            SendRequest(sqlExpression, ad.ParamsWithID);
+            string sqlExpression = "exec UpdateAd " + ad.ToStringWithId();
+            SendRequest(sqlExpression);
         }
         public static void CerateContact(Contact contact)
         {
-            string sqlExpression = "exec Authentication @Login, @Password";
-            List<SqlParameter> sqlParameters = new List<SqlParameter>
-            {
-                new SqlParameter("@Login",contact.Login),
-                new SqlParameter("@Login",contact.Password)
-            };
-            SendRequest(sqlExpression, sqlParameters);
+            string sqlExpression = "exec Authentication " + contact.LoginAndPassword;
+            SendRequest(sqlExpression);
         }
-        private static void SendRequest(string sqlExpression, List<SqlParameter> sqlParameters = null)
+        private static void SendRequest(string sqlExpression,params SqlParameter[] sqlParameters)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
                 //command.Parameters.Add(new SqlParameter("@Login", contact.Login));
+                //command.Parameters.Add(new SqlParameter("@Password", contact.Password));
+                //command.Parameters.Add(new SqlParameter("@Name", contact.Name));
                 foreach (var param in sqlParameters)
                 {
                     command.Parameters.Add(param);
@@ -97,16 +79,14 @@ namespace Backend.Models
                 connection.Close();
             }
         }
+        public delegate void AddMethod(string param);
 
-
-        public static void GetContactsInfo(string sqlExpression, AddMethod contact, int id)
+        public static void GetContactsInfo(string sqlExpression, AddMethod contact)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add(new SqlParameter("@Id", id));
-
                 SqlDataReader reader = command.ExecuteReader();
                 int i = 0;
                 if (reader.HasRows)
@@ -126,16 +106,12 @@ namespace Backend.Models
                 reader.Close();
             }
         }
-        public static string GetContactsInfo(string sqlExpression, Contact contact)
+        public static string GetContactsInfo(string sqlExpression)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-
-                command.Parameters.Add(new SqlParameter("@Login", contact.Login));
-                command.Parameters.Add(new SqlParameter("@Password", contact.Password));
-
                 SqlDataReader reader = command.ExecuteReader();
                 int i = 0;
                 if (reader.HasRows)
@@ -163,7 +139,7 @@ namespace Backend.Models
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.Parameters.Add(new SqlParameter("@Login", contact.Login));
+                command.Parameters.Add(new SqlParameter("@Login",contact.Login));
                 command.Parameters.Add(new SqlParameter("@Password", contact.Password));
                 command.Parameters.Add(new SqlParameter("@Name", contact.Name));
                 command.ExecuteNonQuery();
@@ -173,13 +149,11 @@ namespace Backend.Models
         public static void DeleteUser(int id, Contact contact)
         {
             string sqlExpression = "exec DeleteUser @Login, @Password, @UserID ";
-            List<SqlParameter> sqlParameters = new List<SqlParameter>
-            {
-                new SqlParameter("@Login", contact.Login),
-                new SqlParameter("@Password", contact.Password),
-                new SqlParameter("@UserId", id)
-            };
-            SendRequest(sqlExpression, sqlParameters);
+            SqlParameter[] sqlParameters = new SqlParameter[3];
+            sqlParameters[0] = new SqlParameter("@Login", contact.Login);
+            sqlParameters[1] = new SqlParameter("@Password", contact.Password);
+            sqlParameters[2] = new SqlParameter("@UserId", id);
+            SendRequest(sqlExpression,sqlParameters);
         }
     }
 }

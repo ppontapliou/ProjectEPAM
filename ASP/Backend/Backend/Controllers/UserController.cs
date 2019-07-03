@@ -13,16 +13,7 @@ namespace Backend.Controllers
         {
             _repository = repository;
         }
-
-        // GET: api/User
-        //[HttpGet]
-        //[ResponseType(typeof(Contact))]
-        //public IHttpActionResult Get(Contact contact)
-        //{
-        //    return Ok(_repository.GetUser(contact));
-        //}                
-
-        // POST: api/User
+      
         [HttpPost]
         [ResponseType(typeof(Contact))]
         public IHttpActionResult Post(Contact contact)
@@ -43,9 +34,9 @@ namespace Backend.Controllers
         // DELETE: api/User/5
         [HttpDelete]
         [ResponseType(typeof(Contact))]
-        public IHttpActionResult Delete(int id,[FromBody]Contact contact)
+        public IHttpActionResult Delete(int id, Contact contact)
         {
-            _repository.DeleteUser(id,contact);
+            _repository.DeleteUser(id, contact);
             return Ok();
         }
     }

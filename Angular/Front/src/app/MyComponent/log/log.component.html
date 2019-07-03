@@ -1,5 +1,5 @@
 <a (click)="change()">
-  <span *ngIf="!(this.auth.Loggined)">LogIn</span>
+  <span *ngIf="!(this.auth.Loggined)">Войти</span>
   <span *ngIf="(this.auth.Loggined)">{{this.auth.UserName}}</span>
 </a>
 
@@ -8,7 +8,7 @@
   <div *ngIf="!(this.auth.Loggined)">
     <input type="text" name="Login" class="row" [(ngModel)]="log">
     <input type="password" name="Password" class="row" [(ngModel)]="pass">
-    <button (click)="LogIn()" >поключить</button>
+    <button (click)="LogIn()" >Поключить</button>
   </div>
   
 

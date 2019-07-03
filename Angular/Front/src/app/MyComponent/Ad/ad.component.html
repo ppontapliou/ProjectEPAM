@@ -1,0 +1,14 @@
+<div class="col s6">
+  <div class="card">
+    <span class="card-title" style="color: black">{{ ad.NameAd }}</span>
+    <div class="card-image">
+      <img src="{{ ad.Picture }}">
+    </div>
+    <div class="card-content">
+      <p>{{ad.Title.substr(0,300)}}<span *ngIf="ad.Title.length>300">...</span></p>
+    </div>
+    <div class="card-action">
+      <a [routerLink]="['ad', Id]">Посмотреть</a>
+    </div>
+  </div>
+</div>

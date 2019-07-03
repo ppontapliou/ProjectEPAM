@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
 namespace Backend.Models
 {
     public class Contact
-    {
+    {   
         public int Id { get; set; }
         public string Name { get; set; }
         public List<string> Phones { get; set; }
@@ -31,6 +30,14 @@ namespace Backend.Models
             {
                 Phones.Add(phones);
             }
-        }        
+        }
+        public string LoginAndPassword
+        {
+            get { return $" '{Login}', '{Password}' "; }
+        }
+        public string GenegarateReginfo()
+        {
+            return $" '{Name}', '{Login}', '{Password}' ";
+        }
     }
 }

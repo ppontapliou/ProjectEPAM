@@ -3,15 +3,18 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AdComponent } from './Ad/ad.component';
+
 import { HttpClientModule } from '@angular/common/http';
-import { AdsPageComponent } from './ads-page/ads-page.component';
-import { BigAdComponent } from './big-ad/big-ad.component';
+
 import { RouterModule } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { LogComponent } from './MyComponent/log/log.component';
 
 import { FormsModule } from '@angular/forms'
+import { AdsPageComponent } from './MyComponent/ads-page/ads-page.component';
+import { BigAdComponent } from './MyComponent/big-ad/big-ad.component';
+import { AdComponent } from './MyComponent/Ad/ad.component';
+import { SortPipe } from './MyComponent/ads-page/sort.pipe';
 
 const routes = [
   { path: '', component: AdsPageComponent },
@@ -24,13 +27,14 @@ const routes = [
     AdComponent,
     AdsPageComponent,
     BigAdComponent,
-    LogComponent
+    LogComponent,
+    SortPipe
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    //ScrollingModule,
+    ScrollingModule,
     RouterModule.forRoot(routes),
     FormsModule,
 
