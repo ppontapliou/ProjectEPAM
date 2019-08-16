@@ -1,60 +1,146 @@
 ﻿using Backend.Interfaces;
 using Backend.Models;
+using System;
 using System.Web.Http;
 using System.Web.Http.Description;
-
+using Unity;
 
 namespace Backend.Controllers
 {
-
     public class AdsController : ApiController
     {
-        // GET: api/Ads
         IRepository _repository;
-
         public AdsController(IRepository repository)
         {
             _repository = repository;
+
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("api/Ads")]
+        public IHttpActionResult GetAds(string type = null, string category = null)
+        {
+            try
+            {
+                return Ok(_repository.GetAds(type, category).Ad);
+            }
+            catch (FormatException)
+            {
+                return BadRequest();
+            }
+            catch
+            {
+                return InternalServerError();
+            }
         }
 
-        public IHttpActionResult Get()
-        {           
-            return Ok(_repository.GetAds());
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("api/Ads/{id:int}")]
+        public IHttpActionResult GetAd(int id)
+        {
+            try
+            {
+                return Ok(_repository.GetAd(id));
+            }
+            catch (FormatException)
+            {
+                return BadRequest();
+            }
+            catch
+            {
+                return InternalServerError();
+            }
         }
 
-        // GET: api/Ads/5
-        public IHttpActionResult Get(int id)
-        {           
-            var result = new Ads(DBHelper.GetAds("exec GetAd " + id)).Ad[0];
-            return Ok(_repository.GetAd(id));
+        [Authorize]
+        [HttpGet]
+        [Route("api/Ads/UserAds")]
+        public IHttpActionResult GetUserAds()
+        {
+            try
+            {
+                return Ok(_repository.GetUserAds(User.Identity.Name));
+            }
+            catch (FormatException)
+            {
+                return BadRequest();
+            }
+            catch
+            {
+                return InternalServerError();
+            }
         }
 
-        // POST: api/Ads
+        [Authorize]
         [HttpPost]
         [ResponseType(typeof(Ad))]
-        public IHttpActionResult Post([FromBody]Ad value)
+        public IHttpActionResult AddAd([FromBody]Ad ad)
         {
-            _repository.PostAd(value);           
-            return Ok();
+            try
+            {
+                ad.Contact = new Contact()
+                {
+                    Login = User.Identity.Name
+                };
+                _repository.AddAd(ad);
+                return Ok();
+            }
+            catch (FormatException)
+            {
+                return BadRequest();
+            }
+            catch
+            {
+                return InternalServerError();
+            }
         }
 
-        // PUT: api/Ads/5
+        [Authorize]
         [HttpPut]
         [ResponseType(typeof(Ad))]
-        public IHttpActionResult Put(Ad value)
+        public IHttpActionResult ChangeAd([FromBody]Ad ad)
         {
-            _repository.PutAd(value);            
-            return Ok();
+            try
+            {
+                if (!User.IsInRole("Admin"))
+                {
+                    ad.Contact = new Contact()
+                    {
+                        Login = User.Identity.Name
+                    };
+                }
+                _repository.ChangeAd(ad, User.IsInRole("Admin"));
+                return Ok();
+            }
+            catch (FormatException)
+            {
+                return BadRequest();
+            }
+            catch
+            {
+                return InternalServerError();
+            }
         }
 
-        // DELETE: api/Ads/5
+        [Authorize]
         [HttpDelete]
-        [ResponseType(typeof(Ad))]
-        public IHttpActionResult Delete(Ad value)
+        [ResponseType(typeof(Contact))]
+        public IHttpActionResult DeleteAd(int id)
         {
-            _repository.DeleteAd(value);
-          
-            return Ok();
+            try
+            {
+                _repository.DeleteAd(id,User.Identity.Name, User.IsInRole("Admin"));
+                return Ok();
+            }
+            catch (FormatException)
+            {
+                return BadRequest();
+            }
+            catch
+            {
+                return InternalServerError();
+            }
         }
     }
 }

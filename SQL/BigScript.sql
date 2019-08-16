@@ -96,16 +96,21 @@ INSERT INTO [dbo].[Ads]
            ,@Type
            ,@State)
 go
+go
+create proc GetCategories
+as
+select * from Categories
+go
+
 CREATE proc [dbo].[Initialization]
 @Login nvarchar(50),
-@Password nvarchar(max),
 @out int out
 as
 declare @out1 int
 select @out1 =
 (select Contacts.Id from Contacts inner join Users
 					on Users.Id = Contacts.Id
-where Users.[Login] = @Login and Users.[Password] = @Password)
+where Users.[Login] = @Login)
 select @out = @out1
 go
 
@@ -113,7 +118,8 @@ CREATE proc [dbo].[AddContact]
 @Name NVARCHAR(100),
 @Login NVARCHAR(50),
 @Password NVARCHAR(max),
-@Status int
+@Status int,
+@Mail NVARCHAR(100)
 as
 insert into Users 
 		   ([Login]
@@ -130,7 +136,9 @@ INSERT INTO [dbo].[Contacts]
      VALUES
            (@Name
 		   ,SCOPE_IDENTITY())
+EXEC AddEmail @Login, @Mail
 go
+
 CREATE proc [dbo].[GetAd]
 @id int
 as
@@ -175,13 +183,12 @@ select
 	inner join [Types] on [Types].Id = Ads.[Type]
 go
 
-create proc AddEmail
+create proc [dbo].[AddEmail]
 @Login nvarchar(50),
-@Password nvarchar(max),
 @Email nvarchar(20)
 as
 declare @Contact int
-EXECUTE [dbo].[Initialization]  @Login,@Password,@Contact out
+EXECUTE [dbo].[Initialization]  @Login, @Contact out
 if not @Contact is null 
 begin
 
@@ -194,7 +201,6 @@ INSERT INTO [dbo].[ContactsEmails]
            (@Contact
            ,SCOPE_IDENTITY())
 end
-
 go
 
 create proc AddPhone
@@ -228,7 +234,7 @@ declare @user int
 exec Initialization @Login,@Password, @user out
 if (select count(*) from Ads where ads.Contact = @user and ads.Id = @IdAd) = 1
 DELETE FROM [dbo].[Ads]
-      WHERE ads.Ad = @IdAd
+      WHERE ads.Id = @IdAd
 GO
 
 CREATE proc [dbo].[GetUserAds]
@@ -248,6 +254,7 @@ select
 ,Adress
 ,[Types].[Type]
 ,States.[State]
+,Contacts.Id
  from Ads
 	inner join Categories on Categories.Id = Ads.Category
 	inner join Contacts on Contacts.Id = Ads.Contact
@@ -272,6 +279,8 @@ CREATE proc [dbo].[UpdateAd]
 as
 	declare @user int
 	exec Initialization @Login,@Password, @user out
+	declare @UserStatus int
+	select @UserStatus  = (select [Status] from Users where Users.[Id] = @user)
 	if (select count(*) from Ads where ads.Contact = @user and ads.Id = @IdAd) = 1
 	UPDATE [dbo].[Ads]
 	   SET [Ad] = @Ad
@@ -283,15 +292,21 @@ as
 	      ,[Adress] = @Adress
 	      ,[Type] = @Type
 	      ,[State] = @State
-	 WHERE ads.Contact = @user and Ads.Id = @IdAd
+	 WHERE (ads.Contact = @user or (@UserStatus = 3 or @UserStatus = 2)) and Ads.Id = @IdAd
 go
 
 create proc [Authentication]
 @Login nvarchar(50),
 @Password nvarchar(max)
 as
-select Name from Contacts inner join Users
+select Name
+	  ,Statuses.Status
+	   ,Contacts.Id
+ from Contacts inner join Users
+					inner join Statuses
+						on Statuses.Id= users.Status
 					on Contacts.Id = Users.Id
+			   
 	where [Login] = @Login and [Password] = @Password
 go
 
@@ -340,6 +355,99 @@ DELETE FROM [dbo].[Users]
       WHERE Users.Id = @UserID
 end
 go
+create proc GetPartAd
+@firstElement int
+as
+WITH NthRowCTE AS
+(
+	select 	 
+	Ads.Id 
+	,Ad
+	,Title
+	,DataCreation
+	,Picture
+	,Categories.Category
+	,Contacts.Name
+	,Adress
+	,[Types].[Type]
+	,States.[State] 
+	,Contacts.Id as 'ContactId'
+	,ROW_NUMBER() OVER (ORDER BY Ads.Id ) AS RNum
+	 from Ads
+		inner join Categories on Categories.Id = Ads.Category
+		inner join Contacts on Contacts.Id = Ads.Contact
+		inner join States on States.Id = Ads.[State]
+		inner join [Types] on [Types].Id = Ads.[Type]
+)
+SELECT 
+	 NthRowCTE.Id 
+	,Title
+	,DataCreation
+	,Picture
+	,NthRowCTE.Category
+	,NthRowCTE.Name
+	,Adress
+	,NthRowCTE.[Type]
+	,NthRowCTE.[State]
+	,NthRowCTE.ContactId 
+	FROM NthRowCTE WHERE RNum between @firstElement and @firstElement+5
+go
+
+CREATE PROC ChangeUser
+@Id int,
+@Login nvarchar(50),
+@Password nvarchar(max),
+@Name nvarchar(100),
+@Role int
+as
+UPDATE [dbo].[Contacts]
+   SET [Name] = @Name
+ WHERE Contacts.Id = @Id
+UPDATE [dbo].Users
+   SET [Login] = @Name,
+	   [Password] = @Password,
+	   [Status] = @Role
+ WHERE Users.Id = @Id
+GO
+
+CREATE PROC DeleteUser
+@Id int
+as
+DELETE FROM [dbo].[Users]
+      WHERE Users.Id = @Id
+GO
+
+CREATE PROC ChangePhone
+@Id int,
+@Phone nvarchar(20)
+as
+update [dbo].Phones
+	set [Phone] = @Phone
+	where Phones.Id = @Id
+GO
+
+CREATE PROC DeletePhone
+@Id int
+as
+DELETE FROM [dbo].Phones
+	where Id = @Id
+GO
+
+CREATE PROC ChangeMail
+@Id int,
+@Mail nvarchar(20)
+as
+update [dbo].Emails
+	set Email = @Mail
+	where Id = @Id
+GO
+
+CREATE PROC DeleteMail
+@Id int
+as
+DELETE FROM [dbo].Emails
+	where Id = @Id
+GO
 --initializing data
 INSERT INTO [dbo].[Statuses] ([Status]) VALUES ('User')
 INSERT INTO [dbo].[Statuses] ([Status]) VALUES ('Editor')

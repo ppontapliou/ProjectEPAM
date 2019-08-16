@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Backend.Models.DBModelsHelper;
+using System;
 using System.Linq;
-using System.Web;
 
 namespace Backend.Models
 {
-
     public class Ad
     {
-        
         public int Id { get; set; }
-        public string NameAd { get; set; }
+        public string Name { get; set; }
         public string Title { get; set; }
         public DateTime DateCreation { get; set; }
         public string Picture { get; set; }
@@ -22,15 +19,59 @@ namespace Backend.Models
 
         public Ad()
         {
+            Contact = new Contact();
+        }
 
-        }
-        public override string ToString()
+        public int ContactId
         {
-            return $"\'{NameAd}\', \'{Title}\', \'{DateCreation}\', \'{Picture}\', {Category}, \'{Adress}\', {Type}, {State}, \'{Contact.Login}\', \'{Contact.Password}\'";
+            set
+            {
+                this.Contact.Id = value;
+                this.Contact.Phones = DBHelper.GetPhones(value);
+                this.Contact.Mails = DBHelper.GetMails(value);
+            }
         }
-        public string ToStringWithId()
+        public string ContactName { set => this.Contact.Name = value; }
+
+        public bool Valided
         {
-            return $"\'{NameAd}\', \'{Title}\', \'{DateCreation}\', \'{Picture}\', {Category}, \'{Adress}\', {Type}, {State}, \'{Contact.Login}\', \'{Contact.Password}\', {Id}";
+            get
+            {
+                DBModelHelper helper = new DBModelHelper();
+                if (Name == null ||
+                    Name.Length > 100 ||
+                    Title == null ||
+                    Title.Length > 3000 ||
+                    Picture == null ||
+                    !Uri.IsWellFormedUriString(Picture, UriKind.RelativeOrAbsolute) ||
+                    Adress == null ||
+                    Adress.Length > 150 ||
+                    Category == null ||
+                    helper.Categories.First(t => t.Category == this.Category) == null ||
+                    Type == null ||
+                    helper.Types.First(t => t.Type == this.Type) == null ||
+                    State == null ||
+                    helper.States.First(s => s.State == this.State) == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+        public int IdCategory()
+        {
+            DBModelHelper helper = new DBModelHelper();
+            return helper.Categories.First(t => t.Category == this.Category).Id;
+        }
+        public int IdType()
+        {
+            DBModelHelper helper = new DBModelHelper();
+            return helper.Types.First(t => t.Type == this.Type).Id;
+        }
+        public int IdState()
+        {
+            DBModelHelper helper = new DBModelHelper();
+            return helper.States.First(s => s.State == this.State).Id;
         }
     }
 }

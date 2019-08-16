@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Web.Http.Dependencies;
 using Unity;
-using Unity.Exceptions;
 
-namespace WebApiDepInject.Models
+namespace Backend.Models
 {
     public class UnityResolver : IDependencyResolver
     {

@@ -1,13 +1,12 @@
-﻿using Backend.Controllers;
-using Backend.Interfaces;
+﻿using Backend.Interfaces;
 using Backend.Models;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Formatting;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using Unity;
-using WebApiDepInject.Models;
 
 namespace Backend
 {
@@ -18,16 +17,7 @@ namespace Backend
             // Конфигурация и службы веб-API
 
             // Маршруты веб-API
-            var corsAttr = new EnableCorsAttribute("http://localhost:4200", "*", "*");
-            config.EnableCors(corsAttr);
             config.MapHttpAttributeRoutes();
-
-            var container = new UnityContainer();
-            container.RegisterType<IRepository, Repository>();
-            config.DependencyResolver = new UnityResolver(container);
-
-            
-
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
@@ -35,7 +25,16 @@ namespace Backend
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            //config.Services.Replace(typeof(ApiController),new AdsController(new Repository()));
+            var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
+            jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+
+            var container = new UnityContainer();
+            container.RegisterType(typeof(IRepository), typeof(Repository));
+            container.RegisterType(typeof(ICacheHandler), typeof(CacheHandler));
+            config.DependencyResolver = new UnityResolver(container);
+            //var container1 = new UnityContainer();
+            //container1.RegisterType(typeof(ICacheHandler), typeof(CacheHandler));
         }
     }
 }
