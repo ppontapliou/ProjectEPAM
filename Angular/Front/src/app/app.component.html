@@ -2,7 +2,10 @@
     <div class="nav-wrapper">
         <a routerLink="/" class="brand-logo">EPAM-Project</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a routerLink="/">Home</a></li>
+            <li *ngFor="let elem of this.auth.UserLinks">
+              <a routerLink="{{elem.path}}" (click)="RouteHome(elem.buttonMethod)">{{elem.name}}</a>
+            </li>
+            <li><a><app-log></app-log></a></li>
         </ul>
     </div>
 </nav>

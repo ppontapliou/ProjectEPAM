@@ -1,0 +1,18 @@
+<div class="col s6">
+  <div class="card">
+    <span class="card-title" style="color: black">{{ ad.Name }}</span>
+    <div class="card-image">
+      <img src="{{ ad.Picture }}">
+    </div>
+    <div class="card-content">
+      <p>{{ad.Title.substr(0,300)}}<span *ngIf="ad.Title.length>300">...</span></p>
+    </div>
+    <div class="card-action">
+      <a [routerLink]="['/ad/', ad.Id]">Посмотреть</a>
+    </div>
+    <div class="buttons" *ngIf="changeVisible">
+      <img (click)="Change(ad.Id)" [src] ="changeImage" >
+      <img (click)="Delete(ad.Id)" [src]="deleteImage" >
+    </div>
+  </div>
+</div>

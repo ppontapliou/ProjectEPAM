@@ -1,21 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Backend.Models.DBModelsHelper;
+using Newtonsoft.Json;
 using NLog;
+
 
 namespace Backend.Models
 {
+    
     public class Contact
-    {
+    {        
         public int Id { get; set; }
         public string Name { get; set; }
         public List<Parameter> Phones { get; set; }
         public List<Parameter> Mails { get; set; }
+        [JsonProperty("Login")]
         public string Login { get; set; }
+        [JsonProperty("Password")]
         public string Password { get; set; }
+        
         public string Role { get; set; }
+        [JsonIgnore]
         public string LogDate { private get; set; }
+        [JsonIgnore]
         public int IdRole { get => new DBModelHelper().Statuses.First(s => s.Status == Role).Id; }
+        [JsonIgnore]
         public int IdUser { get => new DBModelHelper().Users.First(u => u.Login == Login).Id; }
         private static Logger Logger = LogManager.GetCurrentClassLogger();
         public Contact()
@@ -23,7 +32,7 @@ namespace Backend.Models
             LogDate = "Forget give name";
         }
 
-
+        
         public bool Validated(bool withIdParameter)
         {
             DBModelHelper helper = new DBModelHelper();
@@ -67,6 +76,7 @@ namespace Backend.Models
             }
             return relult;
         }
+        [JsonIgnore]
         public bool LoginValided
         {
             get

@@ -1,5 +1,6 @@
 ﻿using Backend.Interfaces;
 using Backend.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,6 @@ namespace Backend
     {
         public static void Register(HttpConfiguration config)
         {
-            // Конфигурация и службы веб-API
-
-            // Маршруты веб-API
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
@@ -26,13 +24,14 @@ namespace Backend
             );
 
             var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
-            jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            jsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
 
 
             var container = new UnityContainer();
             container.RegisterType(typeof(IRepository), typeof(Repository));
-            container.RegisterType(typeof(ICacheHandler), typeof(CacheHandler));
+            
             config.DependencyResolver = new UnityResolver(container);
+            container.RegisterType(typeof(ICacheHandler), typeof(CacheHandler));
             //var container1 = new UnityContainer();
             //container1.RegisterType(typeof(ICacheHandler), typeof(CacheHandler));
         }

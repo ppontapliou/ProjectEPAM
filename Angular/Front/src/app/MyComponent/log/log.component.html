@@ -1,0 +1,20 @@
+<a (click)="change()">
+  <span *ngIf="!(this.auth.Loggined)">Войти</span>
+  <span *ngIf="(this.auth.Loggined)">{{this.auth.UserName}}</span>
+</a>
+
+
+<div class="window" *ngIf="Visible">
+  <div *ngIf="!(this.auth.Loggined)">
+    <input type="text" name="Login" class="row" [(ngModel)]="log">
+    <input type="password" name="Password" class="row" [(ngModel)]="pass">
+    <button (click)="LogIn()">Поключить</button>
+  </div>
+
+  <div *ngIf="(this.auth.Loggined)">
+
+    <a [routerLink]="['/add/']" >Добавить объявление</a>
+    <!--<a [routerLink]="['/contact/']" >Инфо</a>-->
+    <button (click)="LogOut()" style="display:block;margin: 10px auto">Отключить</button>
+  </div>
+</div>

@@ -27,12 +27,14 @@ namespace Backend.Models
         }
         public static Ad GetAd(int id)
         {
-            string sqlExpression = "EXEC GetAd @Id";
+            string sqlExpression = "EXEC GetAd @id";
 
-            SqlParameter[] sqlParameters = new SqlParameter[1];
-            sqlParameters[0] = new SqlParameter("@Id", id);
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@id", id)
+            };
 
-            string rezult = ReturnData(sqlExpression);
+            string rezult = ReturnData(sqlExpression,sqlParameters);
             Ads ads = new Ads
             {
                 Ad = JsonConvert.DeserializeObject<List<Ad>>(rezult)

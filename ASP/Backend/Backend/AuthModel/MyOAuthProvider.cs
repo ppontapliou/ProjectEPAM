@@ -12,8 +12,8 @@ namespace Backend.AuthModel
     {
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-
-            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+            
+            
             var identity = new ClaimsIdentity(context.Options.AuthenticationType);
 
             using (DBUsers _repo = new DBUsers())

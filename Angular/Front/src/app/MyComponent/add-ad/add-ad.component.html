@@ -1,0 +1,38 @@
+<div>
+  <p *ngIf="!AllCorrect">
+    Заполните все поля!
+  </p>
+  <div class="Main">
+    <input type="text" placeholder="Название" [(ngModel)]="Name">
+    <br>
+    <input type="text" placeholder="ссылка на картинку" [(ngModel)]="src">
+    <br>
+
+    <input type="text" placeholder="Местонахождение" [(ngModel)]="Place">
+    <br>
+    <select id="category" type="text" [(ngModel)]="category">
+      <option disabled>Выберите категорию товара</option>
+      <option *ngFor="let elem of Categories">{{elem.NameCategory}}</option>
+    </select>
+    <label for="category">Категория</label>
+    <br>
+    <select [(ngModel)]="type" id="type">
+      <option disabled>Выберите тип</option>
+      <option>Товар</option>
+      <option>Услуга</option>
+    </select>
+    <label for="type">Тип</label>
+    <br>
+    <select [(ngModel)]="status" id="status">
+      <option disabled>Выберите состояние</option>
+      <option>Новое</option>
+      <option>бу</option>
+      <option>нет</option>
+    </select>
+    <label for="status">Состояние</label>
+    <br>
+  </div>
+  <textarea class="description" id="description" placeholder="Описание" maxlength="1000" [(ngModel)]="Title"></textarea>
+  <button (click)="check()">отправить</button>
+  <img src="{{src}}" class="checkpicture" id="img">
+</div>

@@ -1,0 +1,35 @@
+.description {
+  display: block;
+  position: relative;
+  width: 70%;
+  height: 200px;
+  left: 15%;
+  border: 1px solid #cecece;
+  background: #F6F6f6;
+  border-radius: 8px;
+  padding: 6px 6px 4px 10px;
+  min-height: 50px;
+  resize: none;
+}
+
+.Main * {
+  left: 15%;
+  position: relative;
+  margin-top: 10px;
+  width: 50%;
+}
+
+.checkpicture {
+  max-width: 150px;
+  max-height: 150px;
+}
+
+div {
+  position: relative;
+}
+
+img {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}

@@ -1,0 +1,97 @@
+img {
+  max-width: 150px !important;
+  max-height: 150px !important;
+}
+
+.s6 {
+  width: 100% !important;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+}
+
+.col {
+  position: relative;
+  float: left;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0 .75rem;
+  min-height: 1px;
+}
+
+.card .card-action {
+  background-color: inherit;
+  border-top: 1px solid rgba(160, 160, 160, 0.2);
+  position: absolute;
+  padding: 16px 0px;
+  width: 100%;
+  bottom: 0px;
+}
+
+.card .card-action a {
+  color: #ffab40;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.card {
+  display: block;
+  height: 250px;
+}
+
+.card {
+  position: relative;
+  margin: .5rem 0 1rem 0;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.card-image img {
+  display: block;
+  margin: auto;
+}
+
+.card-image {
+  position: relative;
+  width: 190px !important;
+  height: 190px !important;
+  margin: 0;
+  float: left;
+}
+
+.card-title {
+  display: block;
+  /*position: absolute;*/
+  bottom: 0px;
+  margin: auto;
+  text-align: center;
+}
+
+.card-action {
+  text-align: center;
+}
+
+.card-content {
+  height: 60%;
+  padding: 5px;
+  /* Поля вокруг текста */
+  text-overflow: ellipsis;
+}
+
+.card-content p {
+  height: 100px;
+  padding: 5px;
+  /* Поля вокруг текста */
+  text-overflow: ellipsis;
+}
+
+.buttons {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.buttons img {
+  height: 30px;
+}

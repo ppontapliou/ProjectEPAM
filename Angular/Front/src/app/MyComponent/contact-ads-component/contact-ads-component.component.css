@@ -1,0 +1,31 @@
+.div-search {
+  display: inline-block;
+  border-bottom: 1px solid;
+  margin: 5px;
+}
+
+.div-search input {
+  all: unset;
+  width: 400px;
+}
+
+.row {
+  display: block;
+  height: 81vh;
+  overflow: scroll;
+  overflow-x: hidden;
+
+}
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
