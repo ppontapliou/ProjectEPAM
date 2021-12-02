@@ -1,35 +1,43 @@
-.description {
-  display: block;
-  position: relative;
-  width: 70%;
-  height: 200px;
-  left: 15%;
-  border: 1px solid #cecece;
-  background: #F6F6f6;
-  border-radius: 8px;
-  padding: 6px 6px 4px 10px;
-  min-height: 50px;
-  resize: none;
-}
-
-.Main * {
-  left: 15%;
-  position: relative;
-  margin-top: 10px;
-  width: 50%;
-}
-
-.checkpicture {
-  max-width: 150px;
-  max-height: 150px;
-}
-
-div {
-  position: relative;
-}
-
-img {
+.example-loading-shade {
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: 66px;
+  left: 0;
+  bottom: 0px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+mat-vertical-stepper {
+  width: 40%;
+  margin:auto;
+  min-width: 200;
+}
+mat-vertical-stepper input{
+  width: 80%;
+}
+/*  */
+mat-form-field{
+  width: 100%;
+}
+input[type="file"] {
+  display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+.fileInput{
+  background: #3f51b5;
+  border-radius: 5px;
+  padding: 10px;
+}
+.fileInput{
+  display: block;
+  margin-top: 10px;
 }

@@ -1,0 +1,67 @@
+.example-loading-shade {
+  position: absolute;
+  top: 66px;
+  left: 0;
+  bottom: 0px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+mat-vertical-stepper {
+  width: 40%;
+  margin:auto;
+  min-width: 200;
+}
+mat-vertical-stepper input{
+  width: 80%;
+}
+/*  */
+mat-form-field{
+  width: 100%;
+}
+.Case{
+  width: 500px;
+  padding: 10px;
+  margin-top: 50px;
+  margin-left: 25%;
+  border-radius: 25px;
+  border: solid black 2px;
+}
+
+.ItemBlock{
+  margin-top: 10px;
+  margin-left: 9%;
+  margin-right: 50%;
+  border: 1px solid #ee6e73; /* Параметры рамки */
+  padding: 40px; /* Поля вокруг текста */
+  border-radius: 50px 50px 50px 50px;
+}
+table {
+  width: 100%;
+}
+button {
+  margin-left: 10px;
+}
+
+.NameBlock {
+  margin-left: 150px;
+}
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  min-width: 100px;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 200px;
+}
+.example-find-width{
+  width: 25%;
+}

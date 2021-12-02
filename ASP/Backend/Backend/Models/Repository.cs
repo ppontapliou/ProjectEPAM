@@ -12,9 +12,6 @@ namespace Backend.Models
         ICacheHandler _cacheHandler;
         public Repository()
         {
-            //IUnityContainer ServiceLocator = new UnityContainer();
-            //ServiceLocator.RegisterType(typeof(ICacheHandler), typeof(CacheHandler));
-            //_cacheHandler = ServiceLocator.Resolve<ICacheHandler>();
             _cacheHandler = new CacheHandler();
         }
         #region Ads part
@@ -28,38 +25,48 @@ namespace Backend.Models
             Ad ad = DBHelper.GetAd(id);
             return ad;
         }
+
+        public Ads GetPartAds(int id, int category, int state, string name, int type)
+        {
+            if (id < 0 || category < 0 || state < 0 || name == null)
+            {
+                throw new ArgumentException();
+            }
+            string cType = type.ToString()=="0"?"": type.ToString();
+
+            if (category == 0 && state == 0)
+            {
+                return DBHelper.GetPartAds(id, name, cType);
+            }
+            if (category == 0)
+            {
+                return DBHelper.GetPartAdsState(id, state, name, cType);
+            }
+            if (state == 0)
+            {
+                return DBHelper.GetPartAdsCategory(id, category, name, cType);
+            }
+            return DBHelper.GetPartAds(id, category, state, name, cType);
+        }
+
         public Ads GetAds(string type, string category)
         {
-            DBModelHelper helper = new DBModelHelper();
             Ads ads = DBHelper.GetAds();
-            if (type != null)
-            {
-                if (helper.Types.First(t => t.Type == type) == null)
-                {
-                    throw new FormatException("not corrected type " + type);
-                }
-                ads.SortType(type);
-            }
-            if (category != null)
-            {
-                if (helper.Categories.First(t => t.Category == category) == null)
-                {
-                    throw new FormatException("not corrected category " + category);
-                }
-                ads.SortCategory(category);
-            }
+
             return ads;
         }
+
         public Ads GetUserAds(string login)
         {
-            DBHelper helper = new DBHelper();
             if (login.Length > 50)
             {
                 throw new FormatException();
             }
+
             return DBHelper.GetUserAds(login);
         }
-        public void AddAd(Ad ad)
+
+        public int AddAd(Ad ad)
         {
             if (ad == null)
             {
@@ -69,8 +76,9 @@ namespace Backend.Models
             {
                 throw new FormatException("Ad object not valided");
             }
-            DBHelper.AddAd(ad);
+            return DBHelper.AddAd(ad);
         }
+
         public void ChangeAd(Ad ad, bool isAdmin)
         {
             if (ad == null)
@@ -83,29 +91,24 @@ namespace Backend.Models
             }
             if (isAdmin)
             {
-                if (ad.Contact != null && ad.Contact.LoginValided)
-                {
-                    DBHelper.ChangeAd(ad);
-                }
+                DBHelper.ChangeAd(ad);
+                return;
             }
-            else
+            DBModelHelper helper = new DBModelHelper();
+            if (ad.Contact != null && ad.Contact.LoginValided)
             {
-                DBModelHelper helper = new DBModelHelper();
-                if (ad.Contact != null && ad.Contact.LoginValided)
+                var user = helper.Users.First(u => u.Login == ad.Contact.Login);
+                if (user != null)
                 {
-                    var user = helper.Users.First(u => u.Login == ad.Contact.Login);
-                    if (user != null)
+                    if (helper.Ads.First(a => a.Id == ad.Id && a.Contact == user.Id) != null)
                     {
-                        if (helper.Ads.First(a => a.Id == ad.Id && a.Contact == user.Id) != null)
-                        {
-                            DBHelper.ChangeAd(ad);
-                        }
+                        DBHelper.ChangeAd(ad);
                     }
-
                 }
             }
 
         }
+
         public void DeleteAd(int id, string login, bool isAdmin)
         {
             if (id <= 0)
@@ -129,24 +132,27 @@ namespace Backend.Models
         #endregion
 
         #region User part
-        public void CreateUser(Contact contact)
+
+        public Contact[] GetUsers(int id, string name)
         {
-            if (contact == null ||
-                !contact.Validated(false))
-            {
-                DBHelper.AddUser(contact);
-            }
-            else
+            if (id < 0 || name == null)
             {
                 throw new FormatException();
             }
+            return DBHelper.GetContacts(id, name);
         }
+
+        public void CreateUser(Contact contact)
+        {
+            
+            DBHelper.AddUser(contact);
+        }
+
         public void ChangeUser(Contact contact, bool isAdmin)
         {
             if (isAdmin)
             {
-                if (contact == null ||
-                    !contact.Validated(true))
+                if (contact != null)
                 {
                     DBHelper.ChangeUser(contact);
                 }
@@ -205,21 +211,24 @@ namespace Backend.Models
         }
         public void DeletePhone(Contact contact, bool admin)
         {
-            if (contact.Id <= 0)
+            bool complete = false;
+            var phones = GetPhones(contact.Login);
+            foreach (var phone in phones)
             {
-                throw new FormatException();
+                if (phone.Id == contact.Phones[0].Id)
+                {
+                    DBHelper.DeletePhone(contact.Phones[0].Id, contact.Login);
+                    complete = true;
+                    break;
+                }
             }
-            DBModelHelper helper = new DBModelHelper();
-            int idUser = helper.Users.First(u => u.Login == contact.Login).Id;
-            bool hasNumber = helper.ContactsPhones.First(c => c.Phone == contact.Phones[0].Id && c.Contact == idUser) != null;
-            if (hasNumber)
+            if (!complete)
             {
-                DBHelper.DeletePhone(contact.Phones[0].Id);
+                throw new InvalidOperationException();
             }
         }
         public void ChangePhone(Contact contact, bool admin)
         {
-            DBModelHelper helper = new DBModelHelper();
             if (contact == null ||
                 contact.Login == null ||
                 contact.Login.Length > 50 ||
@@ -232,23 +241,31 @@ namespace Backend.Models
             {
                 throw new FormatException();
             }
-            int idUser = helper.Users.First(u => u.Login == contact.Login).Id;
-            bool hasNumber = helper.ContactsPhones.First(c => c.Phone == contact.Phones[0].Id && c.Contact == idUser) != null;
-            if (hasNumber)
+            bool complete = false;
+            var phones = GetPhones(contact.Login);
+            foreach (var phone in phones)
             {
-                DBHelper.ChangePhone( contact.Phones[0].Name, contact.Phones[0].Id);
+                if (phone.Id == contact.Phones[0].Id)
+                {
+                    DBHelper.ChangePhone(contact.Phones[0].Name, contact.Phones[0].Id);
+                    complete = true;
+                    break;
+                }
+            }
+            if (!complete)
+            {
+                throw new InvalidOperationException();
             }
         }
         public List<Parameter> GetPhones(string login)
         {
-            if (login == null||
-                login.Length>50)
+            if (login == null ||
+                login.Length > 50)
             {
                 throw new FormatException();
             }
-            DBModelHelper helper = new DBModelHelper();
-            int idUser = helper.Users.First(u => u.Login == login).Id;
-            return DBHelper.GetPhones(idUser);
+
+            return DBHelper.GetPhonesByLogin(login);
         }
         #endregion
 
@@ -273,21 +290,25 @@ namespace Backend.Models
         }
         public void DeleteMail(Contact contact, bool admin)
         {
-            if (contact.Id <= 0)
+            bool complete = false;
+            var mails = GetMails(contact.Login);
+            foreach (var mail in mails)
             {
-                throw new FormatException();
+                if (mail.Id == contact.Mails[0].Id)
+                {
+                    DBHelper.DeleteMail(contact.Mails[0].Id);
+                    complete = true;
+                    break;
+                }
             }
-            DBModelHelper helper = new DBModelHelper();
-            int idUser = helper.Users.First(u => u.Login == contact.Login).Id;
-            bool hasNumber = helper.ContactsEmails.First(c => c.Email == contact.Mails[0].Id && c.Contact == idUser) != null;
-            if (hasNumber)
+            if (!complete)
             {
-                DBHelper.DeleteMail( contact.Mails[0].Id);
+                throw new InvalidOperationException();
             }
         }
+
         public void ChangeMail(Contact contact, bool admin)
         {
-            DBModelHelper helper = new DBModelHelper();
             if (contact == null ||
                 contact.Login == null ||
                 contact.Login.Length > 50 ||
@@ -300,11 +321,20 @@ namespace Backend.Models
             {
                 throw new FormatException();
             }
-            int idUser = helper.Users.First(u => u.Login == contact.Login).Id;
-            bool hasNumber = helper.ContactsEmails.First(c => c.Email == contact.Mails[0].Id && c.Contact == idUser) != null;
-            if (hasNumber)
+            bool complete = false;
+            var mails = GetMails(contact.Login);
+            foreach (var mail in mails)
             {
-                DBHelper.ChangeMail(contact.Login, contact.Mails[0].Name, contact.Mails[0].Id);
+                if (mail.Id == contact.Mails[0].Id)
+                {
+                    DBHelper.ChangeMail(contact.Mails[0].Name, contact.Mails[0].Id);
+                    complete = true;
+                    break;
+                }
+            }
+            if (!complete)
+            {
+                throw new InvalidOperationException();
             }
         }
         public List<Parameter> GetMails(string login)
@@ -314,9 +344,8 @@ namespace Backend.Models
             {
                 throw new FormatException();
             }
-            DBModelHelper helper = new DBModelHelper();
-            int idUser = helper.Users.First(u => u.Login == login).Id;
-            return DBHelper.GetMails(idUser);
+
+            return DBHelper.GetMailsByLogin(login);
         }
 
         #endregion
@@ -354,7 +383,7 @@ namespace Backend.Models
             }
             DBModelHelper helper = new DBModelHelper();
             helper.AddState(parameter.Name);
-            _cacheHandler.RefreshTypes();
+            _cacheHandler.RefreshStates();
         }
 
         public void ChangeCategory(Parameter category)
@@ -391,15 +420,15 @@ namespace Backend.Models
             _cacheHandler.RefreshStates();
         }
 
-        public void DeleteCategory(Parameter category)
+        public void DeleteCategory(int id)
         {
             DBModelHelper helper = new DBModelHelper();
-            if (category.Id <= 0 ||
-                helper.Categories.Where(c => c.Id == category.Id) == null)
+            if (id <= 0 ||
+                helper.Categories.Where(c => c.Id == id) == null)
             {
                 throw new FormatException();
             }
-            helper.DeleteCategory(category.Id);
+            helper.DeleteCategory(id);
             _cacheHandler.RefreshCategories();
         }
         public void DeleteType(Parameter type)
@@ -413,15 +442,15 @@ namespace Backend.Models
             helper.DeleteType(type.Id);
             _cacheHandler.RefreshTypes();
         }
-        public void DeleteState(Parameter state)
+        public void DeleteState(int id)
         {
             DBModelHelper helper = new DBModelHelper();
-            if (state.Id <= 0 ||
-                helper.States.Where(c => c.Id == state.Id) == null)
+            if (id <= 0 ||
+                helper.States.Where(c => c.Id == id) == null)
             {
                 throw new FormatException();
             }
-            helper.DeleteState(state.Id);
+            helper.DeleteState(id);
             _cacheHandler.RefreshStates();
         }
 
@@ -439,6 +468,39 @@ namespace Backend.Models
         {
             return _cacheHandler.GetStates();
         }
+        #endregion
+
+        #region Image
+
+        public void AddImage(Parameter parameter, string login, bool isAdmin)
+        {
+            if (isAdmin||(DBHelper.CheckUserAd(login, parameter.Id) && DBHelper.ImageCount(parameter.Id).Name != "9"))
+            {
+                DBHelper.AddImage(parameter);
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
+        }
+
+        public void DeleteImages(int idAd, int id, string login, bool isAdmin)
+        {
+            if (isAdmin || (DBHelper.CheckUserAd(login, idAd) && DBHelper.CheckAdImage(id, idAd)))
+            {
+                DBHelper.DeleteImage(id, idAd);
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
+        }
+
+        public Parameter[] GetImages(int idAd)
+        {
+            return DBHelper.GetImage(idAd);
+        }
+
         #endregion
     }
 }

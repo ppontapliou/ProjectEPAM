@@ -30,7 +30,7 @@ namespace Backend.AuthModel
         }
         public ContactData FindUser(string login, string password)
         {
-            var user = Users.First(userDB => userDB.Login == login && userDB.Password == password);
+            var user = Users.FirstOrDefault(userDB => userDB.Login == login && userDB.Password == password);
 
             if (user != null)
             {

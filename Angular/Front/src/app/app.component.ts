@@ -18,16 +18,7 @@ export class AppComponent implements OnInit {
   //
   ngOnInit() {
     console.log(this.auth.UserLinks);
-    //(this.auth.Auth('log1', "password1"));
+    this.auth.Init();
   }
-  RouteHome(str: string) {
-    // console.log(str);
-    // if(str =="GetMyAds()"){
-    //   this.adsService.GetContactAd('http://localhost:61988/api/Ads/ContactAds',)
-    //   .subscribe((responces: any) => {
-    //     this.adsService.response = (responces);
 
-    //   })
-    // }
-  }
 }

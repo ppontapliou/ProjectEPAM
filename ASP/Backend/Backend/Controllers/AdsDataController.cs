@@ -1,10 +1,6 @@
 ﻿using Backend.Interfaces;
 using Backend.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -15,9 +11,7 @@ namespace Backend.Controllers
         IRepository _repository;
         public AdsDataController(IRepository repository)
         {
-            _repository = repository;
-            
-            
+            _repository = repository;            
         }
 
         [Authorize(Roles = "Admin, Editor")]
@@ -164,12 +158,12 @@ namespace Backend.Controllers
 
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]
-        [Route("api/AdsData/DeleteCategory")]
-        public IHttpActionResult DeleteCategory(Parameter parameter)
+        [Route("api/AdsData/DeleteCategory/{id:int}")]
+        public IHttpActionResult DeleteCategory(int id)
         {
             try
             {
-                _repository.DeleteCategory(parameter);
+                _repository.DeleteCategory(id);
             }
             catch (FormatException)
             {
@@ -184,12 +178,12 @@ namespace Backend.Controllers
 
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]
-        [Route("api/AdsData/DeleteState")]
-        public IHttpActionResult DeleteState(Parameter parameter)
+        [Route("api/AdsData/DeleteState/{id:int}")]
+        public IHttpActionResult DeleteState(int id)
         {
             try
             {
-                _repository.DeleteState(parameter);
+                _repository.DeleteState(id);
             }
             catch (FormatException)
             {

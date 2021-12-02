@@ -11,11 +11,8 @@ namespace Backend.AuthModel
     public class MyOAuthProvider : OAuthAuthorizationServerProvider
     {
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
-        {
-            
-            
+        {            
             var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-
             using (DBUsers _repo = new DBUsers())
             {
                 ContactData user = await Task.Run(() => _repo.FindUser(context.UserName, context.Password));
@@ -25,12 +22,11 @@ namespace Backend.AuthModel
                     context.SetError("invalid_grant", "The user name or password is incorrect.");
                     return;
                 }
-
-                identity.AddClaim(new Claim("sub", user.Name));
+                identity.AddClaim(new Claim(ClaimTypes.Name, user.Login));
+                identity.AddClaim(new Claim("name", user.Name));
                 identity.AddClaim(new Claim("role", user.Role));
             }
             context.Validated(identity);
-
         }
 
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)

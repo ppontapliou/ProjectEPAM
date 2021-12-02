@@ -9,10 +9,12 @@ namespace Backend.Interfaces
         Ads GetAds(string type, string category);
         Ads GetUserAds(string login);
         Ad GetAd(int id);
+        Ads GetPartAds(int count, int category, int state, string name, int type);
         void DeleteAd(int Id, string login, bool isAdmin);
-        void AddAd(Ad ad);
+        int AddAd(Ad ad);
         void ChangeAd(Ad ad, bool isAdmin);
 
+        Contact[] GetUsers(int id, string name);
         void CreateUser(Contact contact);
         void ChangeUser(Contact contact, bool admin);
         void DeleteUser(int id);
@@ -35,12 +37,16 @@ namespace Backend.Interfaces
         void ChangeType(Parameter parameter);
         void ChangeState(Parameter parameter);
 
-        void DeleteCategory(Parameter parameter);
+        void DeleteCategory(int id);
         void DeleteType(Parameter parameter);
-        void DeleteState(Parameter parameter);
+        void DeleteState(int id);
 
         List<Parameter> GetCategories();
         List<Parameter> GetTypes();
         List<Parameter> GetStates();
+
+        Parameter[] GetImages(int idAd);
+        void DeleteImages(int idAd, int id, string login, bool isAdmin);
+        void AddImage(Parameter parameter, string login, bool isAdmin);
     }
 }

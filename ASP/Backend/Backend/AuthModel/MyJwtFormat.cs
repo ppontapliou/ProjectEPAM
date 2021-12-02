@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.DataHandler.Encoder;
 using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ namespace Backend.AuthModel
             IdentityModelEventSource.ShowPII = true;
             var issuer = "localhost";
             var audience = "all";
-            var key = Convert.FromBase64String("this is my custom Secret key for authnetication");
+            var key = TextEncodings.Base64Url.Decode("IxrAjDoa2FqElO7IhrSrUJELhUckePEPVpaePlS_Xaw");
 
             var now = DateTime.UtcNow;
             var expires = now.AddMinutes(_options.AccessTokenExpireTimeSpan.TotalMinutes);
@@ -51,7 +52,7 @@ namespace Backend.AuthModel
 
         public AuthenticationTicket Unprotect(string protectedText)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

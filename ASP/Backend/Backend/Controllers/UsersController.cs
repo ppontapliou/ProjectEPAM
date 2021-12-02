@@ -3,6 +3,8 @@ using Backend.Models;
 using System.Collections.Generic;
 using System;
 using System.Web.Http;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
 
 namespace Backend.Controllers
 {
@@ -14,7 +16,13 @@ namespace Backend.Controllers
         {
             _repository = repository;
         }
-
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("GetUsers/{id:int}/name/{name}")]
+        public IHttpActionResult GetUsers(int id, string name)
+        {
+            return Ok(_repository.GetUsers(id, name == "\"\"\"" ? "" : name));
+        }
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("CreateUser")]
@@ -34,7 +42,31 @@ namespace Backend.Controllers
                 return InternalServerError();
             }
         }
-
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Registration")]
+        public IHttpActionResult RegistrateUser([FromBody]Contact contact)
+        {
+            try
+            {
+                contact.Role = "User";
+                _repository.CreateUser(contact);
+                return Ok();
+            }
+            catch(System.Data.SqlClient.SqlException ex)
+            {
+                return BadRequest("Такой логин существует");
+            }
+            catch (FormatException)
+            {
+                return BadRequest("Проверьте ваши данные");
+            }
+            catch
+            {
+                return InternalServerError();
+            }
+            
+        }
         [Authorize]
         [HttpPut]
         [Route("ChangeUser")]
@@ -89,7 +121,7 @@ namespace Backend.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpDelete]
-        [Route("DeleteUser")]
+        [Route("DeleteUser/{id:int}")]
         public IHttpActionResult DeleteUser(int id)
         {
             try
@@ -116,7 +148,7 @@ namespace Backend.Controllers
             {
                 if (!User.IsInRole("Admin"))
                 {
-                    contact.Name = User.Identity.Name;
+                    contact.Login = User.Identity.Name;
                 }
                 _repository.AddPhone(contact, User.IsInRole("Admin"));
                 return Ok();
@@ -138,7 +170,8 @@ namespace Backend.Controllers
         {
             try
             {
-                contact.Name = User.Identity.Name;
+
+                contact.Login = User.Identity.Name;
                 _repository.AddMail(contact, User.IsInRole("Admin"));
                 return Ok();
             }
@@ -161,7 +194,7 @@ namespace Backend.Controllers
             {
                 if (!User.IsInRole("Admin"))
                 {
-                    contact.Name = User.Identity.Name;
+                    contact.Login = User.Identity.Name;
                 }
                 _repository.ChangePhone(contact, User.IsInRole("Admin"));
                 return Ok();
@@ -183,7 +216,7 @@ namespace Backend.Controllers
         {
             try
             {
-                contact.Name = User.Identity.Name;
+                contact.Login = User.Identity.Name;
                 _repository.ChangeMail(contact, User.IsInRole("Admin"));
                 return Ok();
             }
@@ -199,7 +232,7 @@ namespace Backend.Controllers
 
         [Authorize]
         [HttpDelete]
-        [Route("DeleteUserPhones")]
+        [Route("DeleteUserPhones/{id:int}")]
         public IHttpActionResult DeleteUserPhones(int id)
         {
             try
@@ -228,7 +261,7 @@ namespace Backend.Controllers
 
         [Authorize]
         [HttpDelete]
-        [Route("DeleteUserMails")]
+        [Route("DeleteUserMails/{id:int}")]
         public IHttpActionResult DeleteUserMails(int id)
         {
             try
@@ -254,5 +287,7 @@ namespace Backend.Controllers
                 return InternalServerError();
             }
         }
+        
+        
     }
 }

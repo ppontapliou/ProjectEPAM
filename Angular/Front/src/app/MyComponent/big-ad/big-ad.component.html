@@ -1,34 +1,50 @@
-<p>
-  {{response.Name}}
-</p>
-<p>
+<div class="admin-buttons" *ngIf="auth.Status=='Admin'||auth.Status=='Editor'">
+  <button mat-raised-button color="warn" (click)="Change()">Изменить</button>
+  <button mat-raised-button color="warn"
+    (click)="Delete('Удалить',response, 'Удалить объявление '+ response.Name)">Удалить</button>
+</div>
+<mat-grid-list cols="12" rowHeight="25px">
+  <mat-grid-tile [colspan]="12" [rowspan]="2" [style.background]="'lightblue'">
+    {{response.Name}}
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="6" [rowspan]="16" [style.background]="'lightblue'">
+    <app-image-slider [Images]="[response.Picture]" [sImg]="response.Picture" [Id]="response.Id"></app-image-slider>
+    <!-- <img src="{{response.Picture}}"> -->
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="6" [rowspan]="1" [style.background]="'lightblue'" class="non_flex">
+    Создатель объявления: {{response.Contact.Name}}
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="6" [rowspan]="1" [style.background]="'lightblue'" class="non_flex">
+    Дата содания: {{response.DateCreation | date:'medium'}}
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="6" [rowspan]="1" [style.background]="'lightblue'" class="non_flex">
+    Категория: {{response.Category}}
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="6" [rowspan]="1" [style.background]="'lightblue'" class="non_flex">
+    Тип: {{response.Type}}
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="6" [rowspan]="1" [style.background]="'lightblue'" class="non_flex">
+    Состояние: {{response.State}}
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="6" [rowspan]="2" [style.background]="'lightblue'">
+    Адрес: {{response.Adress}}
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="6" [rowspan]="2" [style.background]="'lightblue'">
+    <button mat-button [matMenuTriggerFor]="menu">Контактные данные</button>
+    <mat-menu #menu="matMenu">
+      <div *ngIf="response.Contact.Phones.length!=0">
+        <button mat-menu-item [matMenuTriggerFor]="telephones">Телефон</button>
+      </div>
+      <button mat-menu-item [matMenuTriggerFor]="mails">Почта</button>
+    </mat-menu>
+    <mat-menu #telephones="matMenu">
+      <button mat-menu-item *ngFor="let phone of response.Contact.Phones">{{phone.Name}}</button>
+    </mat-menu>
+    <mat-menu #mails="matMenu">
+      <button mat-menu-item *ngFor="let mail of response.Contact.Mails">{{mail.Name}}</button>
+    </mat-menu>
+  </mat-grid-tile>
+</mat-grid-list>
+<p style="margin:10px 25%; text-align: justify;">
   {{response.Title}}
 </p>
-<p>
-  {{response.Contact.Name}}
-</p>
-<p>
-  {{response.DateCreation | date:'medium'}}
-</p>
-<p>
-  <img src="{{response.Picture}}" style="height: 350px">
-</p>
-<p>
-  {{response.State}}
-</p>
-<p>
-  {{response.Type}}
-</p>
-<p>
-  {{response.Category}}
-</p>
-<p>
-  {{response.Adress}}
-</p>
-<p  *ngFor="let ad of response.Contact.Phones">
-  {{ad}}
-</p>
-<p  *ngFor="let ad of response.Contact.Mails">
-  {{ad}}
-</p>
-

@@ -1,4 +1,4 @@
-<div class="col s6">
+<!-- <div class="col s6">
   <div class="card">
     <span class="card-title" style="color: black">{{ ad.Name }}</span>
     <div class="card-image">
@@ -15,4 +15,26 @@
       <img (click)="Delete(ad.Id)" [src]="deleteImage" >
     </div>
   </div>
-</div>
+</div> -->
+<mat-card class="example-card">
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title>{{ad.Name}}</mat-card-title>
+    <mat-card-subtitle>Категория: {{ad.Category}}</mat-card-subtitle>
+  </mat-card-header>
+  <div class="frame">
+    <img src="{{ ad.Picture }}" alt="">
+  </div>
+  <mat-card-content>
+    <p>
+      {{ad.Title.substr(0,150)}}<span *ngIf="ad.Title.length>100">...</span>
+    </p>
+  </mat-card-content>
+  <mat-card-actions class="Action">
+    <button mat-raised-button color="primary" [routerLink]="['/ad/', ad.Id]">Посмотреть</button>
+
+    <button mat-raised-button color="primary" (click)="Change(ad.Id)" *ngIf=" changeVisible">Изменить</button>
+    <button mat-raised-button color="primary" (click)="Delete(ad.Id)" *ngIf=" changeVisible">Удалить</button>
+
+  </mat-card-actions>
+</mat-card>

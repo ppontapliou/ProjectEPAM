@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -34,7 +34,7 @@ namespace Backend.Models
                 new SqlParameter("@id", id)
             };
 
-            string rezult = ReturnData(sqlExpression,sqlParameters);
+            string rezult = ReturnData(sqlExpression, sqlParameters);
             Ads ads = new Ads
             {
                 Ad = JsonConvert.DeserializeObject<List<Ad>>(rezult)
@@ -45,19 +45,103 @@ namespace Backend.Models
         {
             string sqlExpression = "EXEC GetUserAds @Login";
 
-            SqlParameter[] sqlParameters = new SqlParameter[1];
-            sqlParameters[0] = new SqlParameter("@Login", login);
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Login", login)
+            };
 
-            string rezult = ReturnData(sqlExpression);
+            string rezult = ReturnData(sqlExpression, sqlParameters);
             Ads ads = new Ads
             {
                 Ad = JsonConvert.DeserializeObject<List<Ad>>(rezult)
             };
             return ads;
         }
-        public static void AddAd(Ad ad)
+
+        public static Ads GetPartAds(int id, string name, string type)
         {
-            string sqlExpression = "EXECUTE AddAd @Ad, @Title, @DataCreation, @Picture, @Category, @Adress, @Type, @State, @IdUser";
+            string sqlExpression = "EXEC GetPartAds @Id, @Name, @Type";
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Name", name),
+                new SqlParameter("Type", type)
+            };
+
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            Ads ads = new Ads
+            {
+                Ad = JsonConvert.DeserializeObject<List<Ad>>(rezult)
+            };
+            return ads;
+        }
+
+        public static Ads GetPartAdsCategory(int id, int category, string name, string type)
+        {
+            string sqlExpression = "EXEC GetPartAdsCategory @Id, @Name, @Category, @Type";
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("Category", category),
+                new SqlParameter("@Name", name),
+                new SqlParameter("Type", type)
+            };
+
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            Ads ads = new Ads
+            {
+                Ad = JsonConvert.DeserializeObject<List<Ad>>(rezult)
+            };
+            return ads;
+        }
+
+        public static Ads GetPartAdsState(int id, int state, string name, string type)
+        {
+
+            string sqlExpression = "EXEC GetPartAdsState @Id, @Name, @State, @Type";
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("State", state),
+                new SqlParameter("@Name", name),
+                new SqlParameter("Type", type)
+            };
+
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            Ads ads = new Ads
+            {
+                Ad = JsonConvert.DeserializeObject<List<Ad>>(rezult)
+            };
+            return ads;
+        }
+
+        public static Ads GetPartAds(int id, int category, int state, string name, string type)
+        {
+            string sqlExpression = "EXEC GetPartAdsMulty @Id, @Name, @Category, @State, @Type";
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Category", category),
+                new SqlParameter("State", state),
+                new SqlParameter("@Name", name),
+                new SqlParameter("Type", type)
+            };
+
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            Ads ads = new Ads
+            {
+                Ad = JsonConvert.DeserializeObject<List<Ad>>(rezult)
+            };
+            return ads;
+        }
+
+        public static int AddAd(Ad ad)
+        {
+            string sqlExpression = "EXECUTE AddAd @Ad, @Title, @DataCreation, @Picture, @Category, @Adress, @Type, @State, @Login";
 
             List<SqlParameter> sqlParameters = new List<SqlParameter>
             {
@@ -69,37 +153,38 @@ namespace Backend.Models
                 new SqlParameter("@Type", ad.IdType()),
                 new SqlParameter("@State", ad.IdState()),
                 new SqlParameter("@Adress", ad.Adress),
-                new SqlParameter("@IdUser", ad.Contact.IdUser)
+                new SqlParameter("@Login", ad.Contact.Login),
             };
 
-            SendRequest(sqlExpression, sqlParameters);
+            //SendRequest(sqlExpression, sqlParameters);
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            return JsonConvert.DeserializeObject<Parameter[]>(rezult)[0].Id;
         }
         public static void ChangeAd(Ad ad)
         {
-            string sqlExpression = "EXECUTE ChangeAd @Id, @Ad, @Title, @DataCreation, @Picture, @Category, @Adress, @Type, @State, @IdUser";
+            string sqlExpression = "EXECUTE ChangeAd @Id, @Ad, @Title, @Picture, @Category, @Adress, @Type, @State, @Login";
 
             List<SqlParameter> sqlParameters = new List<SqlParameter>
             {
                 new SqlParameter("@Id", ad.Id),
                 new SqlParameter("@Ad", ad.Name),
                 new SqlParameter("@Title", ad.Title),
-                new SqlParameter("@DataCreation", DateTime.Now),
                 new SqlParameter("@Picture", ad.Picture),
                 new SqlParameter("@Category", ad.IdCategory()),
                 new SqlParameter("@Type", ad.IdType()),
                 new SqlParameter("@State", ad.IdState()),
                 new SqlParameter("@Adress", ad.Adress),
-                new SqlParameter("@IdUser", ad.Contact.IdUser),                
+                new SqlParameter("@Login", ad.Contact.Login),
             };
             SendRequest(sqlExpression, sqlParameters);
         }
         public static void DeleteAd(int id, string login)
         {
-            string sqlExpression = "EXECUTE DeleteAd @Id, @Login";
+            string sqlExpression = "EXECUTE DeleteAd @Login, @IdAd";
 
             List<SqlParameter> sqlParameters = new List<SqlParameter>
             {
-                new SqlParameter("@Id", id),
+                new SqlParameter("@IdAd", id),
                 new SqlParameter("@Login", login),
             };
             SendRequest(sqlExpression, sqlParameters);
@@ -117,16 +202,29 @@ namespace Backend.Models
         #endregion
 
         #region User region
+        public static Contact[] GetContacts(int id, string name)
+        {
+            string sqlExpression = "EXECUTE GetPartUsers @Id, @Name";
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Name",name),
+            };
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            Contact[] contacts = JsonConvert.DeserializeObject<Contact[]>(rezult);
+            return contacts;
+        }
+
         public static void AddUser(Contact contact)
         {
-            string sqlExpression = "EXECUTE AddUser @Login, @Password, @Name, @Role, @Mail";
+            string sqlExpression = "EXECUTE AddContact @Login, @Password, @Name, @Role, @Mail";
             List<SqlParameter> sqlParameters = new List<SqlParameter>
             {
                 new SqlParameter("@Login", contact.Login),
                 new SqlParameter("@Password", contact.Password),
                 new SqlParameter("@Name", contact.Name),
                 new SqlParameter("@Role", contact.IdRole),
-                new SqlParameter("@Mail", contact.Mails[0]),
+                new SqlParameter("@Mail", contact.Mails[0].Name),
             };
             SendRequest(sqlExpression, sqlParameters);
         }
@@ -139,7 +237,7 @@ namespace Backend.Models
                 new SqlParameter("@Login", contact.Login),
                 new SqlParameter("@Password", contact.Password),
                 new SqlParameter("@Name", contact.Name),
-                new SqlParameter("@Role", contact.IdRole),                
+                new SqlParameter("@Role", contact.IdRole),
             };
             SendRequest(sqlExpression, sqlParameters);
         }
@@ -175,7 +273,7 @@ namespace Backend.Models
             };
             SendRequest(sqlExpression, sqlParameters);
         }
-        public static void ChangePhone( string phone, int idPhone)
+        public static void ChangePhone(string phone, int idPhone)
         {
             string sqlExpression = "EXECUTE ChangePhone @IdPhone, @Phone";
             List<SqlParameter> sqlParameters = new List<SqlParameter>
@@ -185,12 +283,13 @@ namespace Backend.Models
             };
             SendRequest(sqlExpression, sqlParameters);
         }
-        public static void DeletePhone( int idPhone)
+        public static void DeletePhone(int idPhone, string login)
         {
-            string sqlExpression = "EXECUTE DeletePhone @IdPhone";
+            string sqlExpression = "EXECUTE DeletePhone @IdPhone, @Login";
             List<SqlParameter> sqlParameters = new List<SqlParameter>
-            {                
+            {
                 new SqlParameter("@IdPhone",idPhone),
+                new SqlParameter("@Login",login),
             };
             SendRequest(sqlExpression, sqlParameters);
         }
@@ -201,6 +300,20 @@ namespace Backend.Models
             List<SqlParameter> sqlParameters = new List<SqlParameter>
             {
                 new SqlParameter("@Id", id)
+            };
+
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+
+            return JsonConvert.DeserializeObject<List<Parameter>>(rezult);
+        }
+
+        public static List<Parameter> GetPhonesByLogin(string login)
+        {
+            string sqlExpression = "EXEC GetPhonesByLogin @Login";
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Login", login)
             };
 
             string rezult = ReturnData(sqlExpression, sqlParameters);
@@ -220,26 +333,27 @@ namespace Backend.Models
             };
             SendRequest(sqlExpression, sqlParameters);
         }
-        public static void ChangeMail(string login, string mail, int idMail)
+        public static void ChangeMail(string mail, int idMail)
         {
-            string sqlExpression = "EXECUTE ChangeMail @Login, @IdMail, @Mail";
+            string sqlExpression = "EXECUTE ChangeMail @IdMail, @Mail";
             List<SqlParameter> sqlParameters = new List<SqlParameter>
             {
-                new SqlParameter("@Login",login),
                 new SqlParameter("@IdMail",idMail),
                 new SqlParameter("@Mail",mail),
             };
             SendRequest(sqlExpression, sqlParameters);
         }
-        public static void DeleteMail( int idMail)
+
+        public static void DeleteMail(int idMail)
         {
             string sqlExpression = "EXECUTE DeleteMail @IdMail";
             List<SqlParameter> sqlParameters = new List<SqlParameter>
-            {                
+            {
                 new SqlParameter("@IdMail",idMail),
             };
             SendRequest(sqlExpression, sqlParameters);
         }
+
         public static List<Parameter> GetMails(int id)
         {
             string sqlExpression = "EXEC GetMails @Id";
@@ -253,8 +367,160 @@ namespace Backend.Models
 
             return JsonConvert.DeserializeObject<List<Parameter>>(rezult);
         }
+
+        public static List<Parameter> GetMailsByLogin(string login)
+        {
+            string sqlExpression = "EXEC GetMailsByLogin @Login";
+
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Login", login)
+            };
+
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+
+            return JsonConvert.DeserializeObject<List<Parameter>>(rezult);
+        }
         #endregion
 
+        #region AdsData
+
+        public static List<Parameter> GetCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> GetTypes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> GetStates()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> InsertCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> InsertTypes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> InsertStates()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> UpdateCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> UpdateTypes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> UpdateStates()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> DelateCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> DelateTypes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<Parameter> DelateStates()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Images
+
+        public static bool CheckUserAd(string login, int idAd)
+        {
+            string sqlExpression = "EXECUTE CheckUserAd @Login, @IdAd";
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Login", login),
+                new SqlParameter("@IdAd", idAd),
+            };
+
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            return JsonConvert.DeserializeObject<Parameter[]>(rezult)[0].Name == "1";
+        }
+
+        public static bool CheckAdImage(int id, int idAd)
+        {
+            string sqlExpression = "EXECUTE CheckUserAd @Id, @IdAd";
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@IdAd", idAd),
+            };
+
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            return JsonConvert.DeserializeObject<Parameter[]>(rezult)[0].Name == "1";
+        }
+
+        public static Parameter ImageCount(int idAd)
+        {
+            string sqlExpression = "EXECUTE CountImage @IdAd";
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@IdAd", idAd),
+            };
+
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            return JsonConvert.DeserializeObject<Parameter[]>(rezult)[0];
+        }
+
+        public static void AddImage(Parameter parameter)
+        {
+            string sqlExpression = "EXECUTE AddAdImage @IdAd, @Path";
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@IdAd", parameter.Id),
+                new SqlParameter("@Path", parameter.Name),
+            };
+            SendRequest(sqlExpression, sqlParameters);
+        }
+
+        public static void DeleteImage(int id, int idAd)
+        {
+            string sqlExpression = "EXECUTE DeleteImage @Id,@IdAd";
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@IdAd", idAd),
+            };
+            SendRequest(sqlExpression, sqlParameters);
+        }
+
+        public static Parameter[] GetImage(int idAd)
+        {
+            string sqlExpression = "EXECUTE GetImage @IdAd";
+            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@IdAd", idAd),
+            };
+            string rezult = ReturnData(sqlExpression, sqlParameters);
+            return JsonConvert.DeserializeObject<Parameter[]>(rezult);
+        }
+
+        #endregion
         /*_________________________________________________________________________________________________________________________________________________________________________*/
         public static string ReturnData(string sqlExpression, List<SqlParameter> sqlParameters = null)
         {
@@ -286,15 +552,16 @@ namespace Backend.Models
                 }
                 command.ExecuteNonQuery();
                 connection.Close();
+
             }
         }
         private static string SQLDataToJson(SqlDataReader dataReader)
         {
             var dataTable = new DataTable();
             dataTable.Load(dataReader);
-            string JSONString = string.Empty;
-            JSONString = JsonConvert.SerializeObject(dataTable);
+            string JSONString = JsonConvert.SerializeObject(dataTable);
             return JSONString;
         }
     }
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          

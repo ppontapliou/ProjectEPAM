@@ -1,4 +1,6 @@
-﻿using Microsoft.Owin.Security.Jwt;
+﻿using Microsoft.Owin.Security.DataHandler.Encoder;
+using Microsoft.Owin.Security.Jwt;
+using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +14,8 @@ namespace Backend.AuthModel
         {
             var issuer = "localhost";
             var audience = "all";
-            var key = Convert.FromBase64String("this is my custom Secret key for authnetication");
-
+            var key = TextEncodings.Base64Url.Decode("IxrAjDoa2FqElO7IhrSrUJELhUckePEPVpaePlS_Xaw");
+            AuthenticationMode = AuthenticationMode.Active;
             AllowedAudiences = new[] { audience };
 
             IssuerSecurityKeyProviders = new[]

@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AdsServise } from 'src/app/MyServises/ads.servise';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 import { AuthorizationService } from 'src/app/MyServises/authorization.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Parameter } from 'src/app/Interfaces/IParameter';
 
 @Component({
   selector: 'app-change-ad-component',
@@ -10,124 +12,147 @@ import { AuthorizationService } from 'src/app/MyServises/authorization.service';
   styleUrls: ['./change-ad-component.component.css']
 })
 export class ChangeAdComponentComponent implements OnInit {
-  category: string = "";
+
+  filesToUpload: File = null;
   status: string = "";
   type: string = "";
-  Name: string = "";
-  src: string = "";
-  Place: string = "";
-  Title: string = "";
+
+  Categories: Parameter[] = [];
+  isLoadingCategories: boolean = true;
+  Types: Parameter[] = [];
+  isLoadingTypes: boolean = true;
+  States: Parameter[] = [];
+  isLoadingStates: boolean = true;
+  isLoadingAdd: boolean = true;
+
+  isLinear = true;
+  nameFormGroup: FormGroup;
+  titleFormGroup: FormGroup;
+  pictureFormGroup: FormGroup;
+  categoryFormGroup: FormGroup;
+  adressFormGroup: FormGroup;
+  typeFormGroup: FormGroup;
+  stateFormGroup: FormGroup;
+
+  adHidden = true;
+  imageHidden = false;
 
   private id: number;
 
-  Categories: any;
-  AllCorrect: boolean = true;
   response: any;
-  private subscription: Subscription;
 
-  constructor(private activateRoute: ActivatedRoute, private adsService: AdsServise, private auth: AuthorizationService,private router: Router) {
-    this.subscription = activateRoute.params.subscribe(params => this.id = params['id']);
-  }
+  Images: Parameter[] = [];
 
-  ngOnInit() {
+  // tslint:disable-next-line: max-line-length
+  constructor(private adsService: AdsServise, private auth: AuthorizationService, private router: Router, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar) {
     if (this.auth.UserName == "") {
       this.router.navigate(['/']);
     }
-    this.adsService.GetCategories("http://localhost:61988/api/Ads/Categories")
-      .subscribe((responce: any) => {
-        console.log(responce);
-        this.Categories = responce.ListCategories;
+    this.id = +localStorage.getItem('changeValue');
+    localStorage.removeItem('changeValue');
+    if (this.id == 0) {
+      this.router.navigate(['/']);
+    }
+  }
+
+  ngOnInit() {
+    this.LoadImages();
+    this.nameFormGroup = this._formBuilder.group({
+      nameCtrl: ['', [Validators.minLength(5), Validators.maxLength(50)]]
+    });
+    this.titleFormGroup = this._formBuilder.group({
+      titleCtrl: ['', [Validators.minLength(5), Validators.maxLength(3000)]]
+    });
+
+    this.categoryFormGroup = this._formBuilder.group({
+      categoryCtrl: ['', Validators.required]
+    });
+    this.adressFormGroup = this._formBuilder.group({
+      adressCtrl: ['', [Validators.minLength(5), Validators.maxLength(100)]]
+    });
+    this.typeFormGroup = this._formBuilder.group({
+      typeCtrl: ['', Validators.required]
+    });
+    this.stateFormGroup = this._formBuilder.group({
+      stateCtrl: ['', Validators.required]
+    });
+
+    this.adsService.GetCategories()
+      .subscribe((responce: Parameter[]) => {
+        this.Categories = responce;
+        this.isLoadingCategories = false;
       });
+
+    this.adsService.GetTypes()
+      .subscribe((responce: Parameter[]) => {
+        this.Types = responce;
+        this.isLoadingTypes = false;
+      });
+
+    this.adsService.GetStates()
+      .subscribe((responce: Parameter[]) => {
+        this.States = responce;
+        this.isLoadingStates = false;
+      });
+    /* * */
+
     this.adsService.GetAd('http://localhost:62976//api/ads/' + this.id)
       .subscribe((responces: any) => {
         this.response = (responces);
-        console.log(this.response);
-        this.category = this.response.Category;
-        this.Name = this.response.NameAd;
-        this.status = this.response.State;
-        this.type = this.response.Type;
-        this.src = this.response.Picture;
-        this.Place = this.response.Adress;
-        this.Title = this.response.Title;
+        this.categoryFormGroup.setValue({ categoryCtrl: this.response.Category });
+        this.nameFormGroup.setValue({ nameCtrl: this.response.Name });
+        this.stateFormGroup.setValue({ stateCtrl: this.response.State });
+        this.typeFormGroup.setValue({ typeCtrl: this.response.Type });
+
+        this.adressFormGroup.setValue({ adressCtrl: this.response.Adress });
+        this.titleFormGroup.setValue({ titleCtrl: this.response.Title });
+        this.isLoadingAdd = false;
       })
   }
-  check() {
-    var Id: any = 1;
-    var type: any;
-    var state: any;
-    switch (this.type) {
-      case "Товар":
-        {
-          type = 1;
-          break;
-        }
-      case "Услуга":
-        {
-          type = 2;
-          break;
-        }
-    }
-    switch (this.status) {
-      case "Новое":
-        {
-          state = 1;
-          break;
-        }
-      case "бу":
-        {
-          state = 2;
-          break;
-        }
-      case "нет":
-        {
-          state = 2;
-          break;
-        }
-    }
-    if (
-      this.category == ""
-      || this.status == ""
-      || this.type == ""
-      || this.Name == ""
-      || this.src == ""
-      || this.Place == ""
-      || this.Title == ""
-    ) {
-      this.AllCorrect = false;
-      return;
-    }
-    else {
-      this.AllCorrect = true;
-    }
-    this.Categories.forEach(element => {
-      if (element.NameCategory == this.category) {
-        Id = element.Id;
-      }
+
+  LoadImages(){
+    this.adsService.GetImages(this.id).subscribe((images:Parameter[])=>{
+      this.Images = images;
     });
-    this.response.Category = Id;
-    this.response.NameAd =
-      this.Name; this.response.State = state;
-    this.response.Type = type;
-    this.response.Picture =this.src;
-    this.response.Adress =this.Place;
-    this.response.Title =this.Title;
-    // var body = {
-    //   NameAd: this.Name,
-    //   Title: this.Title,
-    //   Picture: this.src,
-    //   Adress: this.Place,
-    //   Category: Id,
-    //   Type: type,
-    //   State: state,
-    //   Contact: {
-    //     Login: "",
-    //     Password: "",
-    //   },
-    // };
-    this.adsService.ChangeAd('http://localhost:61988/api/Ads', this.response)
-    .subscribe((response:any)=>{
-      this.router.navigate(['/myads/']);
+  }
+  UpdateAd() {
+
+    this.response.Name = this.nameFormGroup.value.nameCtrl;
+    this.response.Title = this.titleFormGroup.value.titleCtrl;
+    this.response.Adress = this.adressFormGroup.value.adressCtrl;
+    this.response.Category = this.categoryFormGroup.value.categoryCtrl;
+    this.response.Type = this.typeFormGroup.value.typeCtrl;
+    this.response.State = this.stateFormGroup.value.stateCtrl;
+    this.adsService.ChangeAd(this.filesToUpload, this.response)
+      .subscribe((response: any) => {
+        this._snackBar.open("Изменено", "Угу", { duration: 2000 });
+        this.router.navigate(['/myads/']);
+      },
+        err => {
+          this._snackBar.open("Упс, косяк", "Угу", { duration: 2000 });
+        });
+    console.log(this.response);
+  }
+
+  OnFileSelected(event) {
+    this.filesToUpload = event.target.files[0];
+    this._snackBar.open('Изображение выбрано', 'Угу', { duration: 2000 });
+    this.response.Picture = '';
+  }
+
+  DeleteImage (id){
+    this.adsService.DeleteImage(id, this.id).subscribe(()=>{
+      this._snackBar.open('Удалено', 'Угу', { duration: 2000 });
+      this.LoadImages();
+    },
+    err=>{
+      this.router.navigate(['/servereception/']);
     });
-    //console.log(Id, this.status, this.type, this.Name, this.src, this.Place, this.Title);
+  }
+  AddImage(event){
+    this.adsService.AddImage(event.target.files[0], this.id).subscribe(()=>{
+      this._snackBar.open('Добавлен', 'Угу', { duration: 2000 });
+      this.LoadImages();
+    });
   }
 }

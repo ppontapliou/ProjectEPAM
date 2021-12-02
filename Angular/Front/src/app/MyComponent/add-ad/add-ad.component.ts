@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthorizationService } from 'src/app/MyServises/authorization.service';
 import { AdsServise } from 'src/app/MyServises/ads.servise';
-import { ɵELEMENT_PROBE_PROVIDERS } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Parameter } from 'src/app/Interfaces/IParameter';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-ad',
@@ -11,100 +12,104 @@ import { Router } from '@angular/router';
   styleUrls: ['./add-ad.component.css']
 })
 export class AddAdComponent implements OnInit {
-  category: string = "";
-  status: string = "";
-  type: string = "";
-  Name: string = "";
-  src: string = "";
-  Place: string = "";
-  Title: string = "";
 
-  Categories: any;
+  filesToUpload: File[] = null;
+
+  Categories: Parameter[] = [];
+  isLoadingCategories: boolean = false;
+  Types: Parameter[] = [];
+  isLoadingTypes: boolean = false;
+  States: Parameter[] = [];
+  isLoadingStates: boolean = false;
   AllCorrect: boolean = true;
 
-  constructor(private adsService: AdsServise, private auth: AuthorizationService,private router: Router) { }
+  isLinear = true;
+  nameFormGroup: FormGroup;
+  titleFormGroup: FormGroup;
+  pictureFormGroup: FormGroup;
+  categoryFormGroup: FormGroup;
+  adressFormGroup: FormGroup;
+  typeFormGroup: FormGroup;
+  stateFormGroup: FormGroup;
+
+  // tslint:disable-next-line: max-line-length
+  constructor(private adsService: AdsServise, private auth: AuthorizationService, private router: Router, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.adsService.GetCategories("http://localhost:61988/api/Ads/Categories")
-      .subscribe((responce: any) => {
-        console.log(responce);
-        this.Categories = responce.ListCategories;
+    if (this.auth.UserName == '') {
+      this.router.navigate(['/']);
+    }
+    this.isLoadingStates = true;
+    this.isLoadingCategories = true;
+    this.isLoadingTypes = true;
+
+    this.nameFormGroup = this._formBuilder.group({
+      nameCtrl: ['', [Validators.minLength(5), Validators.maxLength(50)]]
+    });
+    this.titleFormGroup = this._formBuilder.group({
+      titleCtrl: ['', [Validators.minLength(5), Validators.maxLength(3000)]]
+    });
+    this.pictureFormGroup = this._formBuilder.group({
+      pictureCtrl: ['', [Validators.minLength(2), Validators.maxLength(1000)]]
+    });
+    this.categoryFormGroup = this._formBuilder.group({
+      categoryCtrl: ['', Validators.required]
+    });
+    this.adressFormGroup = this._formBuilder.group({
+      adressCtrl: ['', [Validators.minLength(5), Validators.maxLength(100)]]
+    });
+    this.typeFormGroup = this._formBuilder.group({
+      typeCtrl: ['', Validators.required]
+    });
+    this.stateFormGroup = this._formBuilder.group({
+      stateCtrl: ['', Validators.required]
+    });
+
+    this.adsService.GetCategories()
+      .subscribe((responce: Parameter[]) => {
+        this.Categories = responce;
+        this.isLoadingCategories = false;
       });
-      if (this.auth.UserName == "") {
-        this.router.navigate(['/']);
-      }
+
+    this.adsService.GetTypes()
+      .subscribe((responce: Parameter[]) => {
+        this.Types = responce;
+        this.isLoadingTypes = false;
+      });
+
+    this.adsService.GetStates()
+      .subscribe((responce: Parameter[]) => {
+        this.States = responce;
+        this.isLoadingStates = false;
+      });
+
   }
-
-  check() {
-    var Id: any = 1;
-    var type: any;
-    var state: any;
-    switch (this.type) {
-      case "Товар":
-        {
-          type = 1;
-          break;
-        }
-      case "Услуга":
-        {
-          type = 2;
-          break;
-        }
-    }
-    switch (this.status) {
-      case "Новое":
-        {
-          state = 1;
-          break;
-        }
-      case "бу":
-        {
-          state = 2;
-          break;
-        }
-      case "нет":
-        {
-          state = 2;
-          break;
-        }
-    }
-    if (
-
-      this.status == ""
-      || this.type == ""
-      || this.Name == ""
-      || this.src == ""
-      || this.Place == ""
-      || this.Title == ""
-    ) {
-      this.AllCorrect = false;
+  AddAd() {
+    var body = {
+      Name: this.nameFormGroup.value.nameCtrl,
+      Title: this.titleFormGroup.value.titleCtrl,
+      Adress: this.adressFormGroup.value.adressCtrl,
+      Category: this.categoryFormGroup.value.categoryCtrl,
+      Type: this.typeFormGroup.value.typeCtrl,
+      State: this.stateFormGroup.value.stateCtrl,
+    };
+    if(this.filesToUpload==null){
       return;
     }
-    else {
-      this.AllCorrect = true;
-    }
-    this.Categories.forEach(element => {
-      if (element.NameCategory == this.category) {
-        Id = element.Id;
-      }
-    });
-    var body = {
-      NameAd: this.Name,
-      Title: this.Title,
-      Picture: this.src,
-      Adress: this.Place,
-      Category: Id,
-      Type: type,
-      State: state,
-      Contact:{
-        Login:"",
-        Password:"",
-      },
-    };
-    this.adsService.AddAd("http://localhost:61988/api/Ads", body).subscribe((resp:any)=>{
+    this.adsService.AddAd(this.filesToUpload, body).subscribe((resp: any) => {
+      this._snackBar.open('Добавлено', 'Угу', { duration: 2000 });
       this.router.navigate(['/myads/']);
-    });
-
-    //console.log(Id, this.status, this.type, this.Name, this.src, this.Place, this.Title);
+    },
+      err => {
+        this._snackBar.open('Упс, косяк', 'Угу', { duration: 2000 });
+      });
+  }
+  OnFileSelected(event) {
+    if (event.target.files.length < 10) {
+      this.filesToUpload = event.target.files;
+      this._snackBar.open('Изображения выбраны [' + this.filesToUpload.length + ']', 'Угу', { duration: 2000 });
+    } else {
+      this._snackBar.open('Изображений должно быть не больше 10', 'Угу', { duration: 2000 });
+    }
   }
 }

@@ -1,0 +1,18 @@
+.ItemBlock{
+  margin-top: 10px;
+  margin-left: 9%;
+  margin-right: 50%;
+  border: 1px solid #ee6e73; /* Параметры рамки */
+  padding: 40px; /* Поля вокруг текста */
+  border-radius: 50px 50px 50px 50px;
+}
+table {
+  width: 100%;
+}
+button {
+  margin-left: 10px;
+}
+
+.NameBlock {
+  margin-left: 150px;
+}

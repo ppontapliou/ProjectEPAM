@@ -1,35 +1,75 @@
-.description {
-  display: block;
-  position: relative;
-  width: 70%;
-  height: 200px;
-  left: 15%;
-  border: 1px solid #cecece;
-  background: #F6F6f6;
-  border-radius: 8px;
-  padding: 6px 6px 4px 10px;
-  min-height: 50px;
-  resize: none;
-}
-
-.Main * {
-  left: 15%;
-  position: relative;
-  margin-top: 10px;
-  width: 50%;
-}
-
-.checkpicture {
-  max-width: 150px;
-  max-height: 150px;
-}
-
-div {
-  position: relative;
-}
-
-img {
+.example-loading-shade {
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: 66px;
+  left: 0;
+  bottom: 0px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+mat-vertical-stepper {
+  width: 40%;
+  margin:auto;
+  min-width: 200;
+}
+mat-vertical-stepper input{
+  width: 80%;
+}
+/*  */
+mat-form-field{
+  width: 100%;
+}
+.example-item {
+  background: white;
+  margin-left: 5px;
+  height: 75px !important;
+  width: 75px !important;
+  border-radius: 50% !important;
+  border: 1px solid black;
+  overflow: hidden;
+  position: relative;
+  display: inline-block;
+}
+
+.example-item img {
+
+  display: block;
+  margin: auto;
+  max-height: 75px !important;
+  max-width: 75px !important;
+  position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+.example-viewport {
+  height: 300px;
+  width: 250px;
+  float: left;
+}
+.delete-buttom {
+  bottom: 30px;
+}
+.fileInput {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: white;
+  background-color: #ee6e73;
+  display: inline-block;
+  padding: 10px;
+}
+.hideInput {
+  width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+

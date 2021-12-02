@@ -1,0 +1,22 @@
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+  padding: 20px;
+  margin: 40px auto;
+  border: 1px solid black;
+  border-radius: 40px;
+  display: block;
+  position: relative;
+  padding-bottom: 50px;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+.example-button {
+  display: block;
+  position: absolute;
+  right: 50px;
+}

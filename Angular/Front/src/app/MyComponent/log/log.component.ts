@@ -12,8 +12,8 @@ export class LogComponent implements OnInit {
   Visible: boolean;
 
   constructor(private auth: AuthorizationService, private router: Router) { }
-  log: string = "";
-  pass: string = "";
+  log: string;
+  pass: string;
   ngOnInit() {
     this.Visible = false;
     this.auth.GetLinks();
@@ -23,16 +23,16 @@ export class LogComponent implements OnInit {
 
   }
   LogIn(login: string, password: string) {
-    console.log("Логинюсь под " + this.log + this.pass);
     (this.auth.Auth(this.log, this.pass));
-
+    //location.reload();
   }
   LogOut() {
     this.auth.LogOut();
-    this.log = "";
-    this.pass = "";
-    this.router.navigate(['/'])
+    this.log = '';
+    this.pass = '';
+    this.router.navigate(['/']);
     this.change();
+    //location.reload();
   }
 
 }

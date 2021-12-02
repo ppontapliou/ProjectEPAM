@@ -43,7 +43,7 @@ namespace Backend.Models
                     Title == null ||
                     Title.Length > 3000 ||
                     Picture == null ||
-                    !Uri.IsWellFormedUriString(Picture, UriKind.RelativeOrAbsolute) ||
+                    //!Uri.IsWellFormedUriString(Picture, UriKind.RelativeOrAbsolute) ||
                     Adress == null ||
                     Adress.Length > 150 ||
                     Category == null ||

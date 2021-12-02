@@ -1,0 +1,56 @@
+<form class="example-form">
+  <mat-form-field class="example-full-width">
+    <mat-label>Введите желаемый логин</mat-label>
+    <input matInput autocomplete="off" [formControl]="LoginFormControl" [errorStateMatcher]="matcher">
+    <mat-error *ngIf="LoginFormControl.hasError('minlength')">
+      Минимум 5 символов
+    </mat-error>
+    <mat-error *ngIf="LoginFormControl.hasError('maxlength')">
+      Максимум 20 символов
+    </mat-error>
+    <mat-error *ngIf="emailFormControl.hasError('required')">
+      Вы не ввели логин
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Введите ваше имя</mat-label>
+    <input matInput autocomplete="off" [formControl]="NameFormControl" [errorStateMatcher]="matcher">
+    <mat-error *ngIf="NameFormControl.hasError('minlength')">
+      Минимум 5 символов
+    </mat-error>
+    <mat-error *ngIf="NameFormControl.hasError('maxlength')">
+      Максимум 50 символов
+    </mat-error>
+    <mat-error *ngIf="emailFormControl.hasError('required')">
+      Вы не ввели имя
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Введите почтовый адрес</mat-label>
+    <input matInput autocomplete="off" [formControl]="emailFormControl" [errorStateMatcher]="matcher">
+    <mat-hint></mat-hint>
+    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+      Введите действительный адрес
+    </mat-error>
+    <mat-error *ngIf="emailFormControl.hasError('required')">
+      Вы не ввели почту
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Введите желаемый пароль</mat-label>
+    <input matInput type="password" autocomplete="off" [formControl]="PasswordFormControl" [errorStateMatcher]="matcher">
+    <mat-error *ngIf="PasswordFormControl.hasError('minlength')">
+      Минимум 5 символов
+    </mat-error>
+    <mat-error *ngIf="PasswordFormControl.hasError('maxlength')">
+      Максимум 40 символов
+    </mat-error>
+    <mat-error *ngIf="emailFormControl.hasError('required')">
+      Вы не ввели пароль
+    </mat-error>
+  </mat-form-field>
+  <button class="example-button" mat-raised-button color="primary" (click)="registracion()">Зарегестрироваться</button>
+</form>

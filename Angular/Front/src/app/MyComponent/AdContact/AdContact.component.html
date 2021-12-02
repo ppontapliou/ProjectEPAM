@@ -1,0 +1,105 @@
+<mat-tab-group>
+  <mat-tab *ngIf="auth.Status=='Admin'" label="Пользователи">
+    <mat-form-field class="example-find-width" style="z-index: 10;">
+      <input matInput placeholder="Поисковик" autocomplete="off" [(ngModel)]="ContactsSearch" name="text">
+    </mat-form-field>
+    <button class="search-button" (click)="Find()" mat-raised-button color="primary">Поиск</button>
+    <div class="example-container mat-elevation-z8">
+      <mat-table #table [dataSource]="Contacts" (scroll)="onTableScroll($event)">
+
+        <ng-container matColumnDef="Name">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.Name}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="Role">
+          <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.Role}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="Login">
+          <mat-header-cell *matHeaderCellDef> Login </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.Login}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="b1">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+
+            <button mat-button mat-flat-button color="primary" (click)="openDialogUser('Удалить',element,'Удаление элемента')">Удалить</button>
+            <button mat-button mat-flat-button color="primary" (click)="SteChangeValue(element)">Изменить</button>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedUserColumns; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedUserColumns;"></mat-row>
+      </mat-table>
+    </div>
+
+
+    <div class="Case">
+      <mat-form-field class="example-full-width" style="z-index: 10;">
+        <input matInput placeholder="Логин" autocomplete="off" [(ngModel)]="Login" name="text">
+      </mat-form-field>
+      <mat-form-field class="example-full-width" style="z-index: 10;">
+        <input matInput type="password" placeholder="Пароль" autocomplete="off" [(ngModel)]="Password" name="text">
+      </mat-form-field>
+      <mat-form-field class="example-full-width" style="z-index: 10;">
+        <input matInput placeholder="Ник" autocomplete="off" [(ngModel)]="Name" name="text">
+      </mat-form-field>
+      <mat-form-field class="example-full-width" style="z-index: 10;">
+        <mat-select matInput placeholder="Роль" [(ngModel)]="Role" required>
+          <mat-option value="User">Пользователь</mat-option>
+          <mat-option value="Admin">Администратор</mat-option>
+          <mat-option value="Editor">Редактор</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field *ngIf="!changeMode" class="example-full-width" style="z-index: 10;">
+        <input matInput placeholder="Почта" autocomplete="off" [(ngModel)]="Mail" name="text">
+      </mat-form-field>
+      <button *ngIf="!changeMode" mat-raised-button color="primary" (click)="CreateUser()" style="z-index: 10;">Добавить</button>
+      <button *ngIf="changeMode" mat-raised-button color="primary" (click)="changeMode = false" style="z-index: 10;">Отмена</button>
+      <button *ngIf="changeMode" mat-raised-button color="primary" (click)="UpdateUser()" style="z-index: 10;">Изменить</button>
+    </div>
+  </mat-tab>
+  <mat-tab label="Категории">
+    <div class="ItemBlock">
+      <button mat-button (click)="openDialogCategory('Добавить',{},'Добавить категорию')" mat-flat-button color="primary">Добавить</button>
+      <table mat-table [dataSource]="Categories" class="mat-elevation-z8">
+        <ng-container matColumnDef="Name">
+          <th mat-header-cell *matHeaderCellDef> Категория </th>
+          <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="b1">
+          <th mat-header-cell *matHeaderCellDef> </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-button mat-flat-button color="primary" (click)="openDialogCategory('Изменить',element, 'Заменить категорию '+ element.Name)">Edit</button>
+            <button mat-button mat-flat-button color="primary" (click)="openDialogCategory('Удалить',element, 'Удаление категории '+ element.Name)">Delete</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-tab>
+  <!-- <mat-tab label="Состояния">
+    <div class="ItemBlock">
+      <button mat-button (click)="openDialogState('Добавить',{}, 'Добавить состояние')" mat-flat-button color="primary">Add</button>
+      <table mat-table [dataSource]="States" class="mat-elevation-z8">
+        <ng-container matColumnDef="Name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="b1">
+          <th mat-header-cell *matHeaderCellDef> </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-button mat-flat-button color="primary" (click)="openDialogState('Изменить',element, 'Заменить состояние '+ element.Name)">Edit</button>
+            <button mat-button mat-flat-button color="primary" (click)="openDialogState('Удалить',element, 'Удалть состояние '+ element.Name)">Delete</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-tab> -->
+</mat-tab-group>

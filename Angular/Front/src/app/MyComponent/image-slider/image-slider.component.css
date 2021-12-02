@@ -1,0 +1,62 @@
+.example-viewport {
+  height: 300px;
+  width: 100px;
+  float: left;
+}
+
+.example-item {
+  background: white;
+  margin: auto;
+  height: 75px !important;
+  width: 75px !important;
+  border-radius: 50% !important;
+  border: 1px solid black;
+  overflow: hidden;
+  position: relative;
+}
+
+.example-item img {
+
+  display: block;
+  margin: auto;
+  max-height: 75px !important;
+  max-width: 75px !important;
+  position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+.frame {
+  padding: 0px;
+  width: 300px;
+  float: left;
+}
+
+.window {
+  margin: auto;
+  height: 300px !important;
+  width: 300px !important;
+}
+
+.window img {
+  display: block;
+  margin: auto;
+  max-height: 300px !important;
+  max-width: 300px !important;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}

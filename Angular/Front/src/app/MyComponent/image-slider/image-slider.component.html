@@ -1,0 +1,11 @@
+<cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+  <div *cdkVirtualFor="let item of Images" class="example-item">
+    <img src="{{item}}" (click)="selectImg(item)">
+  </div>
+</cdk-virtual-scroll-viewport>
+<div class="frame">
+  <div class="window">
+    <img src="{{sImg}}" alt="">
+  </div>
+</div>
+<div style="clear: left;"></div>

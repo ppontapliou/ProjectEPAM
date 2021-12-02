@@ -1,11 +1,44 @@
-<div action="/search/" target="_blank" class="div-search">
-  <input type="search" name="text" required placeholder="Поиск" [(ngModel)]="sortAd">
+<form class="example-form">
+  <mat-form-field class="example-full-width" style="z-index: 10;">
+    <input matInput placeholder="Поисковик" autocomplete="off" [(ngModel)]="sortAd" name="text">
+  </mat-form-field>
+  <button class="search-button" (click)="Find()" mat-raised-button color="primary">Поиск</button>
+  <label id="example-radio-group-label">Тип</label>
+  <mat-radio-group name="TypeGroup" aria-labelledby="example-radio-group-label" class="example-radio-group">
+    <mat-radio-button (change)="ChangeType(0)" class="example-radio-button" [value]="0">Любое</mat-radio-button>
+    <mat-radio-button (change)="ChangeType(1)" class="example-radio-button" [value]="1">Товар</mat-radio-button>
+    <mat-radio-button (change)="ChangeType(2)" class="example-radio-button" [value]="2">Услуга</mat-radio-button>
+  </mat-radio-group>
+
+  <br>
+  <label id="example-radio-group-label1">Категории</label>
+  <mat-radio-group name="CategoryGroup" aria-labelledby="example-radio-group-label1" class="example-radio-group">
+    <mat-radio-button (change)="ChangeCategory(category.Id)" class="example-radio-button"
+      *ngFor="let category of Categories" [value]="category.Id">
+      {{category.Name}}
+    </mat-radio-button>
+  </mat-radio-group>
+
+  <br>
+
+  <label id="example-radio-group-label2">Состояние</label>
+  <mat-radio-group name="StateGroup" aria-labelledby="example-radio-group-label2" class="example-radio-group">
+    <mat-radio-button (change)="ChangeState(state.Id)" class="example-radio-button" *ngFor="let state of States"
+      [value]="state.Id">
+      {{state.Name}}
+    </mat-radio-button>
+  </mat-radio-group>
+  <button (click)="generatePdf()" mat-raised-button color="primary" class="search-button">Скачать загруженные объявления</button>
+</form>
+
+<div class="example-loading-shade" *ngIf="isLoadingResults">
+  <mat-spinner *ngIf="true"></mat-spinner>
 </div>
 
-
-<cdk-virtual-scroll-viewport [itemSize]="250" class="row">
-    <app-ad *cdkVirtualFor="let ad of response | sort:sortAd" [ad]="ad"></app-ad>
-  </cdk-virtual-scroll-viewport>
+<!--  -->
+<cdk-virtual-scroll-viewport [itemSize]="560" class="row" (scrolledIndexChange)="Reload(response.length)">
+  <app-ad *cdkVirtualFor="let ad of response" [ad]="ad"></app-ad>
+</cdk-virtual-scroll-viewport>
 <!--div class="row">
   <app-ad *ngFor="let ad of response | sort:sortAd" [ad]="ad"></app-ad>
 </div>-->

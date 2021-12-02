@@ -1,0 +1,20 @@
+.Exception {
+  font:  bold;
+  font-size: 5em;
+  color: #ee6e73;
+  text-align: center;
+  vertical-align: middle;
+  margin: 10% auto;
+}
+.example-loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

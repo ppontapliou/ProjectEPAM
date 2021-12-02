@@ -101,6 +101,9 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
+    <Reference Include="SendGrid, Version=9.15.1.0, Culture=neutral, PublicKeyToken=4f047e93159395ca, processorArchitecture=MSIL">
+      <HintPath>..\packages\SendGrid.9.15.1\lib\net452\SendGrid.dll</HintPath>
+    </Reference>
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.3.0\lib\net461\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
@@ -165,17 +168,16 @@
     <Compile Include="AuthModel\MyJwtFormat.cs" />
     <Compile Include="AuthModel\MyJwtOptions.cs" />
     <Compile Include="AuthModel\MyOAuthProvider.cs" />
+    <Compile Include="AuthModel\RefreshTokenProvider.cs" />
     <Compile Include="Controllers\AdsController.cs" />
     <Compile Include="Controllers\AdsDataController.cs" />
-    <Compile Include="Controllers\OrdersController.cs" />
+    <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Interfaces\ICacheHandler.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Models\Ad.cs" />
     <Compile Include="Models\Ads.cs" />
     <Compile Include="Models\CacheHandler.cs" />
-    <Compile Include="Models\Categories.cs" />
-    <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\DBHelper.cs" />
     <Compile Include="Models\DBModelsHelper\Ads.cs" />
@@ -191,6 +193,7 @@
     <Compile Include="Models\DBModelsHelper\sysdiagrams.cs" />
     <Compile Include="Models\DBModelsHelper\Types.cs" />
     <Compile Include="Models\DBModelsHelper\Users.cs" />
+    <Compile Include="Models\ImageSaver.cs" />
     <Compile Include="Models\Parameter.cs" />
     <Compile Include="Models\Repository.cs" />
     <Compile Include="Models\UnityResolver.cs" />

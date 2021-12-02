@@ -1,13 +1,127 @@
-<p>
-  ывывы
-</p>
-<div>
-  <div>
-    <input type="email" id="email">
-    <button>Добавить почту</button>
-  </div>
-  <div>
-    <input type="tel" id="tel">
-    <button (click)="AddTelephone()">Добавить телефон</button>
-  </div>
-</div>
+<mat-tab-group>
+  <mat-tab label="Телефоны">
+    <div class="ItemBlock">
+      <button mat-button (click)="openDialog('Добавить',{}, 'Добавить телефон')" mat-flat-button color="primary">Добавить</button>
+      <!-- <table class="table table-striped">
+        <thead>
+          <tr>
+            <td>Phone</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let phone of Phones">
+            <ng-template [ngTemplateOutlet]="loadTemplatePhone(phone)" [ngTemplateOutletContext]="{$implicit:phone}">
+            </ng-template>
+          </tr>
+        </tbody>
+      </table> -->
+      <table mat-table [dataSource]="Phones" class="mat-elevation-z8">
+        <ng-container matColumnDef="Name">
+          <th mat-header-cell *matHeaderCellDef> Телефон </th>
+          <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="b1">
+          <th mat-header-cell *matHeaderCellDef> </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-button mat-flat-button color="primary" (click)="openDialog('Изменить',element, 'Заменить телефон')">Изменить</button>
+            <button mat-button mat-flat-button color="primary" (click)="openDialog('Удалить',element, 'Удалить телефон')">Удалить</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-tab>
+  <mat-tab label="Почта">
+    <div class="ItemBlock">
+      <button mat-button (click)="openDialogMails('Добавить',{},'Добавить почту')" mat-flat-button color="primary">Добавить</button>
+      <!-- <table class="table table-striped">
+        <thead>
+          <tr>
+            <td>Mail</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let mail of Mails">
+            <ng-template [ngTemplateOutlet]="loadTemplateMail(mail)" [ngTemplateOutletContext]="{$implicit:mail}">
+            </ng-template>
+          </tr>
+        </tbody>
+      </table> -->
+      <table mat-table [dataSource]="Mails" class="mat-elevation-z8">
+        <ng-container matColumnDef="Name">
+          <th mat-header-cell *matHeaderCellDef> Почта </th>
+          <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="b1">
+          <th mat-header-cell *matHeaderCellDef> </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-button mat-flat-button color="primary" (click)="openDialogMails('Изменить',element, 'Изменить почту')">Изменить</button>
+            <button mat-button mat-flat-button color="primary"
+              (click)="openDialogMails('Удалить',element, 'Удалить почту')">Удалить</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-tab>
+  <mat-tab label="Имя">
+    <div class="NameBlock">
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="{{this.auth.UserName}}" autocomplete="off">
+        <mat-hint>Введите новое имя</mat-hint>
+      </mat-form-field>
+      <button mat-button mat-flat-button color="primary">Подтвердить</button>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
+
+<!-- <ng-template #readOnlyTemplatePhone let-phone>
+  <td>{{phone.Name}}</td>
+  <td>
+    <input type="button" value="Изменить" class="btn btn-default" (click)="editPhone(phone)" />
+  </td>
+  <td>
+    <input type="button" value="Удалить" (click)="deletePhone(phone)" class="btn btn-danger" />
+  </td>
+</ng-template>
+
+<ng-template #readOnlyTemplateMail let-mail>
+  <td>{{mail.Name}}</td>
+  <td>
+    <input type="button" value="Изменить" class="btn btn-default" (click)="editMail(mail)" />
+  </td>
+  <td>
+    <input type="button" value="Удалить" (click)="deleteMail(mail)" class="btn btn-danger" />
+  </td>
+</ng-template>
+
+<ng-template #editTemplatePhone>
+  <td>
+    <input type="text" [(ngModel)]="EditedPhone.Name" class="form-control" />
+  </td>
+  <td>
+    <input type="button" value="Сохранить" (click)="savePhone()" class="btn btn-success" />
+  </td>
+  <td>
+    <input type="button" value="Отмена" (click)="cancelPhone()" class="btn btn-warning" />
+  </td>
+</ng-template>
+
+<ng-template #editTemplateMail>
+  <td>
+    <input type="text" [(ngModel)]="EditedMail.Name" class="form-control" />
+  </td>
+  <td>
+    <input type="button" value="Сохранить" (click)="saveMail()" class="btn btn-success" />
+  </td>
+  <td>
+    <input type="button" value="Отмена" (click)="cancelMail()" class="btn btn-warning" />
+  </td>
+</ng-template> -->

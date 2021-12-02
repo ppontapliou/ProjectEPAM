@@ -1,38 +1,122 @@
-<div>
-  <p *ngIf="!AllCorrect">
-    Заполните все поля!
-  </p>
-  <div class="Main">
-    <input type="text" placeholder="Название" [(ngModel)]="Name">
-    <br>
-    <input type="text" placeholder="ссылка на картинку" [(ngModel)]="src">
-    <br>
+<button mat-button (click)="adHidden = !adHidden; imageHidden = !imageHidden">Переключить</button>
+<mat-vertical-stepper [linear]="isLinear" #stepper *ngIf="adHidden">
+  <mat-step [stepControl]="nameFormGroup">
+    <form [formGroup]="nameFormGroup">
+      <ng-template matStepLabel> Название объявления</ng-template>
+      <mat-form-field>
+        <input matInput placeholder="Название" formControlName="nameCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Следующее</button>
+      </div>
+    </form>
+  </mat-step>
 
-    <input type="text" placeholder="Местонахождение" [(ngModel)]="Place">
-    <br>
-    <select id="category" type="text" [(ngModel)]="category">
-      <option disabled>Выберите категорию товара</option>
-      <option *ngFor="let elem of Categories">{{elem.NameCategory}}</option>
-    </select>
-    <label for="category">Категория</label>
-    <br>
-    <select [(ngModel)]="type" id="type">
-      <option disabled>Выберите тип</option>
-      <option>Товар</option>
-      <option>Услуга</option>
-    </select>
-    <label for="type">Тип</label>
-    <br>
-    <select [(ngModel)]="status" id="status">
-      <option disabled>Выберите состояние</option>
-      <option>Новое</option>
-      <option>БУ</option>
-      <option>none</option>
-    </select>
-    <label for="status">Состояние</label>
-    <br>
-  </div>
-  <textarea class="description" id="description" placeholder="Описание" maxlength="1000" [(ngModel)]="Title"></textarea>
-  <button (click)="check()">Изменить</button>
-  <img src="{{src}}" class="checkpicture" id="img">
+  <mat-step [stepControl]="titleFormGroup">
+    <form [formGroup]="titleFormGroup">
+      <ng-template matStepLabel>Добавте описание</ng-template>
+      <mat-form-field>
+        <textarea matInput placeholder="Описание" formControlName="titleCtrl" required></textarea>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Назад</button>
+        <button mat-button matStepperNext>Следующее</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="adressFormGroup">
+    <form [formGroup]="adressFormGroup">
+      <ng-template matStepLabel>Укажите адресс</ng-template>
+      <mat-form-field>
+        <input matInput placeholder="Адресс" formControlName="adressCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Назад</button>
+        <button mat-button matStepperNext>Следующее</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="pictureFormGroup">
+
+    <ng-template matStepLabel>Выберите изображение</ng-template>
+    <div class="fileInput1">
+      <label class="fileInput" for="input-file-id">Выберите изображение</label>
+      <input class="hideInput" id="input-file-id" type="file" accept="image/*,image/jpeg" (change)="OnFileSelected($event)">
+    </div>
+    <div>
+      <button mat-button matStepperPrevious>Назад</button>
+      <button mat-button matStepperNext>Следующее</button>
+    </div>
+
+  </mat-step>
+
+  <mat-step [stepControl]="categoryFormGroup">
+    <form [formGroup]="categoryFormGroup">
+      <ng-template matStepLabel>Укажите категорию </ng-template>
+      <mat-form-field>
+        <mat-select matInput formControlName="categoryCtrl" required>
+          <mat-option *ngFor="let category of Categories" value="{{category.Name}}">{{category.Name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Назад</button>
+        <button mat-button matStepperNext>Следующее</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="typeFormGroup">
+    <form [formGroup]="typeFormGroup">
+      <ng-template matStepLabel>Укажите тип </ng-template>
+      <mat-form-field>
+        <mat-select matInput formControlName="typeCtrl" required>
+          <mat-option *ngFor="let type of Types" value="{{type.Name}}">{{type.Name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Назад</button>
+        <button mat-button matStepperNext>Следующее</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="stateFormGroup">
+    <form [formGroup]="stateFormGroup">
+      <ng-template matStepLabel>Укажите состояние </ng-template>
+      <mat-form-field>
+        <mat-select matInput formControlName="stateCtrl" required>
+          <mat-option *ngFor="let state of States" value="{{state.Name}}">{{state.Name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Назад</button>
+        <button mat-button matStepperNext>Следующее</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Завершение</ng-template>
+    Подтвердите изменения
+    <div>
+      <button mat-button matStepperPrevious>Назад</button>
+      <button mat-button (click)="UpdateAd()">Готово</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>
+<div class="change-images" *ngIf="imageHidden">
+  <label class="fileInput" for="input-file-id1">Добавить изображение</label>
+  <input class="hideInput" id="input-file-id1" type="file" accept="image/*,image/jpeg" (change)="AddImage($event)">
+
+  <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+    <div *cdkVirtualFor="let item of Images">
+      <div class="example-item"><img src="{{item.Name}}"></div>
+      <button mat-button class="delete-buttom" (click)="DeleteImage(item.Id)">Удалить</button>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>
+<div class="example-loading-shade" *ngIf="isLoadingCategories||isLoadingTypes||isLoadingStates||isLoadingAdd">
+  <mat-spinner *ngIf="true"></mat-spinner>
 </div>
